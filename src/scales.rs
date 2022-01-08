@@ -2,31 +2,33 @@ use crate::note::{Interval, Note};
 
 const MAJOR_INTERVALS: &'static [u8] = &[2, 2, 1, 2, 2, 2, 1];
 
-pub enum DiatonicMode {
-    Ionian,
-    Dorian,
-    Phrygian,
-    Lydian,
-    Mixolydian,
-    Aeolian,
-    Locrian,
-}
+mod modes {
+    pub enum DiatonicMode {
+        Ionian,
+        Dorian,
+        Phrygian,
+        Lydian,
+        Mixolydian,
+        Aeolian,
+        Locrian,
+    }
 
-impl DiatonicMode {
-    fn intervals(&self) -> Vec<u8> {
-        let shift = match self {
-            DiatonicMode::Ionian => 0,
-            DiatonicMode::Dorian => 1,
-            DiatonicMode::Phrygian => 2,
-            DiatonicMode::Lydian => 3,
-            DiatonicMode::Mixolydian => 4,
-            DiatonicMode::Aeolian => 5,
-            DiatonicMode::Locrian => 6,
-        };
+    impl DiatonicMode {
+        pub fn intervals(&self) -> Vec<u8> {
+            let shift = match self {
+                DiatonicMode::Ionian => 0,
+                DiatonicMode::Dorian => 1,
+                DiatonicMode::Phrygian => 2,
+                DiatonicMode::Lydian => 3,
+                DiatonicMode::Mixolydian => 4,
+                DiatonicMode::Aeolian => 5,
+                DiatonicMode::Locrian => 6,
+            };
 
-        let mut int: Vec<u8> = MAJOR_INTERVALS.to_vec();
-        int.rotate_left(shift);
-        int
+            let mut int: Vec<u8> = super::MAJOR_INTERVALS.to_vec();
+            int.rotate_left(shift);
+            int
+        }
     }
 }
 
@@ -43,6 +45,8 @@ fn generate_scale<'a>(key: &'a Note, intervals: &[u8]) -> Vec<&'a Note> {
 
     res
 }
+
+use modes::DiatonicMode;
 
 pub fn major(key: &Note) -> Vec<&Note> {
     generate_scale(key, MAJOR_INTERVALS)
