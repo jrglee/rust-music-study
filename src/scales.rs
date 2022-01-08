@@ -56,7 +56,7 @@ pub fn minor(key: &Note) -> Vec<&Note> {
     generate_scale(key, &DiatonicMode::Aeolian.intervals())
 }
 
-pub fn diatonic_mode<'a>(key: &'a Note, mode: &'a DiatonicMode) -> Vec<&'a Note> {
+pub fn diatonic_mode<'a>(key: &'a Note, mode: &DiatonicMode) -> Vec<&'a Note> {
     generate_scale(key, &mode.intervals())
 }
 
