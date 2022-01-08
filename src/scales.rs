@@ -58,7 +58,6 @@ pub fn diatonic_mode<'a>(key: &'a Note, mode: &'a DiatonicMode) -> Vec<&'a Note>
 
 #[cfg(test)]
 mod tests {
-
     use super::*;
     use DiatonicMode::*;
     use Note::*;
