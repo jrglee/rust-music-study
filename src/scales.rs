@@ -36,9 +36,9 @@ mod modes {
 
 fn generate_scale(key: &Note, intervals: &[u8]) -> Vec<Note> {
     let mut res: Vec<Note> = vec![key.to_owned()];
-    for i in intervals.iter() {
+    for i in intervals.iter().map(|i| (i - 1) as usize) {
         if let Some(previous) = res.last() {
-            if let Some(next) = previous.skip((i - 1) as usize).next() {
+            if let Some(next) = previous.skip(i).next() {
                 res.push(next);
             }
         }
@@ -79,33 +79,12 @@ mod tests {
 
     #[test]
     fn diatonic_modes() {
-        assert_eq!(
-            diatonic_mode(&C, &Ionian),
-            vec![C, D, E, F, G, A, B, C]
-        );
-        assert_eq!(
-            diatonic_mode(&D, &Dorian),
-            vec![D, E, F, G, A, B, C, D]
-        );
-        assert_eq!(
-            diatonic_mode(&E, &Phrygian),
-            vec![E, F, G, A, B, C, D, E]
-        );
-        assert_eq!(
-            diatonic_mode(&F, &Lydian),
-            vec![F, G, A, B, C, D, E, F]
-        );
-        assert_eq!(
-            diatonic_mode(&G, &Mixolydian),
-            vec![G, A, B, C, D, E, F, G]
-        );
-        assert_eq!(
-            diatonic_mode(&A, &Aeolian),
-            vec![A, B, C, D, E, F, G, A]
-        );
-        assert_eq!(
-            diatonic_mode(&B, &Locrian),
-            vec![B, C, D, E, F, G, A, B]
-        );
+        assert_eq!(diatonic_mode(&C, &Ionian), vec![C, D, E, F, G, A, B, C]);
+        assert_eq!(diatonic_mode(&D, &Dorian), vec![D, E, F, G, A, B, C, D]);
+        assert_eq!(diatonic_mode(&E, &Phrygian), vec![E, F, G, A, B, C, D, E]);
+        assert_eq!(diatonic_mode(&F, &Lydian), vec![F, G, A, B, C, D, E, F]);
+        assert_eq!(diatonic_mode(&G, &Mixolydian), vec![G, A, B, C, D, E, F, G]);
+        assert_eq!(diatonic_mode(&A, &Aeolian), vec![A, B, C, D, E, F, G, A]);
+        assert_eq!(diatonic_mode(&B, &Locrian), vec![B, C, D, E, F, G, A, B]);
     }
 }
