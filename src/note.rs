@@ -14,11 +14,7 @@ pub enum Note {
     B,
 }
 
-pub trait Interval {
-    fn half_step_up(&self) -> Note;
-}
-
-impl Interval for Note {
+impl Note {
     fn half_step_up(&self) -> Note {
         match self {
             Note::C => Note::Db,
@@ -43,5 +39,21 @@ impl Iterator for Note {
     fn next(&mut self) -> Option<Self::Item> {
         *self = self.half_step_up();
         Some(*self)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::note::Note::{C, D, Db};
+
+    #[test]
+    fn get_half_step_up() {
+        assert_eq!(C.half_step_up(), Db);
+        assert_eq!(C.half_step_up().half_step_up(), D);
+    }
+
+    #[test]
+    fn iterate_octave() {
+        assert_eq!(C.skip(11).next(), Some(C));
     }
 }
