@@ -49,6 +49,18 @@ impl Note {
     pub fn major_second(&self) -> Note {
         self.semitone_up(2)
     }
+
+    pub fn minor_third(&self) -> Note {
+        self.semitone_up(3)
+    }
+
+    pub fn major_third(&self) -> Note {
+        self.semitone_up(4)
+    }
+
+    pub fn perfect_fourth(&self) -> Note {
+        self.semitone_up(5)
+    }
 }
 
 impl Iterator for Note {
@@ -62,7 +74,7 @@ impl Iterator for Note {
 
 #[cfg(test)]
 mod tests {
-    use crate::note::Note::{C, D, Db};
+    use crate::note::Note::{Db, Eb, C, D, E, F};
 
     #[test]
     fn get_half_step_up() {
@@ -83,5 +95,20 @@ mod tests {
     #[test]
     fn get_major_second() {
         assert_eq!(C.major_second(), D);
+    }
+
+    #[test]
+    fn get_minor_third() {
+        assert_eq!(C.minor_third(), Eb);
+    }
+
+    #[test]
+    fn get_major_third() {
+        assert_eq!(C.major_third(), E);
+    }
+
+    #[test]
+    fn get_perfect_fourth() {
+        assert_eq!(C.perfect_fourth(), F);
     }
 }
