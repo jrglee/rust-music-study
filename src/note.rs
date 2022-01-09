@@ -31,6 +31,24 @@ impl Note {
             Note::B => Note::C,
         }
     }
+
+    pub fn semitone_up(&self, semitones: usize) -> Note {
+        let mut note = self.to_owned();
+
+        for _ in 0..semitones {
+            note = note.half_step_up()
+        }
+
+        note
+    }
+
+    pub fn minor_second(&self) -> Note {
+        self.semitone_up(1)
+    }
+
+    pub fn major_second(&self) -> Note {
+        self.semitone_up(2)
+    }
 }
 
 impl Iterator for Note {
@@ -55,5 +73,15 @@ mod tests {
     #[test]
     fn iterate_octave() {
         assert_eq!(C.skip(11).next(), Some(C));
+    }
+
+    #[test]
+    fn get_minor_second() {
+        assert_eq!(C.minor_second(), Db);
+    }
+
+    #[test]
+    fn get_major_second() {
+        assert_eq!(C.major_second(), D);
     }
 }

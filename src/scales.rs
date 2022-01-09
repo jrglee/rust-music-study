@@ -36,11 +36,9 @@ mod modes {
 
 fn generate_scale(key: &Note, intervals: &[u8]) -> Vec<Note> {
     let mut res: Vec<Note> = vec![key.to_owned()];
-    for i in intervals.iter().map(|i| (i - 1) as usize) {
-        if let Some(previous) = res.last() {
-            if let Some(next) = previous.skip(i).next() {
-                res.push(next);
-            }
+    for &i in intervals.iter() {
+        if let Some(&previous) = &res.last() {
+            res.push(previous.semitone_up(i as usize));
         }
     }
     res
