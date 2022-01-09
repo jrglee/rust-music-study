@@ -1,4 +1,6 @@
-use crate::note::{Interval, Note};
+use modes::DiatonicMode;
+
+use crate::note::Note;
 
 const MAJOR_INTERVALS: &'static [u8] = &[2, 2, 1, 2, 2, 2, 1];
 
@@ -32,81 +34,78 @@ mod modes {
     }
 }
 
-fn generate_scale<'a>(key: &'a Note, intervals: &[u8]) -> Vec<&'a Note> {
-    let mut res: Vec<&Note> = vec![];
-    let mut n: &Note = key;
-    res.push(n);
-    for &interval in intervals.iter() {
-        for _ in 0..interval {
-            n = n.half_step_up();
+fn generate_scale(key: &Note, intervals: &[u8]) -> Vec<Note> {
+    let mut res: Vec<Note> = vec![key.to_owned()];
+    for i in intervals.iter() {
+        if let Some(previous) = res.last() {
+            if let Some(next) = previous.skip((i - 1) as usize).next() {
+                res.push(next);
+            }
         }
-        res.push(n);
     }
-
     res
 }
 
-use modes::DiatonicMode;
-
-pub fn major(key: &Note) -> Vec<&Note> {
+pub fn major(key: &Note) -> Vec<Note> {
     generate_scale(key, MAJOR_INTERVALS)
 }
 
-pub fn minor(key: &Note) -> Vec<&Note> {
+pub fn minor(key: &Note) -> Vec<Note> {
     generate_scale(key, &DiatonicMode::Aeolian.intervals())
 }
 
-pub fn diatonic_mode<'a>(key: &'a Note, mode: &DiatonicMode) -> Vec<&'a Note> {
+pub fn diatonic_mode(key: &Note, mode: &DiatonicMode) -> Vec<Note> {
     generate_scale(key, &mode.intervals())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use DiatonicMode::*;
     use Note::*;
 
+    use super::*;
+
     #[test]
     fn major_scale() {
-        assert_eq!(major(&C), vec![&C, &D, &E, &F, &G, &A, &B, &C]);
-        assert_eq!(major(&G), vec![&G, &A, &B, &C, &D, &E, &Gb, &G]);
+        assert_eq!(major(&C), vec![C, D, E, F, G, A, B, C]);
+        assert_eq!(major(&G), vec![G, A, B, C, D, E, Gb, G]);
     }
 
     #[test]
     fn minor_scale() {
-        assert_eq!(minor(&A), vec![&A, &B, &C, &D, &E, &F, &G, &A]);
-        assert_eq!(minor(&E), vec![&E, &Gb, &G, &A, &B, &C, &D, &E]);
+        assert_eq!(minor(&A), vec![A, B, C, D, E, F, G, A]);
+        assert_eq!(minor(&E), vec![E, Gb, G, A, B, C, D, E]);
     }
 
     #[test]
     fn diatonic_modes() {
         assert_eq!(
             diatonic_mode(&C, &Ionian),
-            vec![&C, &D, &E, &F, &G, &A, &B, &C]
+            vec![C, D, E, F, G, A, B, C]
         );
         assert_eq!(
             diatonic_mode(&D, &Dorian),
-            vec![&D, &E, &F, &G, &A, &B, &C, &D]
+            vec![D, E, F, G, A, B, C, D]
         );
         assert_eq!(
             diatonic_mode(&E, &Phrygian),
-            vec![&E, &F, &G, &A, &B, &C, &D, &E]
+            vec![E, F, G, A, B, C, D, E]
         );
         assert_eq!(
             diatonic_mode(&F, &Lydian),
-            vec![&F, &G, &A, &B, &C, &D, &E, &F]
+            vec![F, G, A, B, C, D, E, F]
         );
         assert_eq!(
             diatonic_mode(&G, &Mixolydian),
-            vec![&G, &A, &B, &C, &D, &E, &F, &G]
+            vec![G, A, B, C, D, E, F, G]
         );
         assert_eq!(
             diatonic_mode(&A, &Aeolian),
-            vec![&A, &B, &C, &D, &E, &F, &G, &A]
+            vec![A, B, C, D, E, F, G, A]
         );
         assert_eq!(
             diatonic_mode(&B, &Locrian),
-            vec![&B, &C, &D, &E, &F, &G, &A, &B]
+            vec![B, C, D, E, F, G, A, B]
         );
     }
 }

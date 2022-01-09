@@ -1,4 +1,4 @@
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Note {
     C,
     Db,
@@ -15,24 +15,33 @@ pub enum Note {
 }
 
 pub trait Interval {
-    fn half_step_up(&self) -> &Note;
+    fn half_step_up(&self) -> Note;
 }
 
 impl Interval for Note {
-    fn half_step_up(&self) -> &Note {
+    fn half_step_up(&self) -> Note {
         match self {
-            Note::C => &Note::Db,
-            Note::Db => &Note::D,
-            Note::D => &Note::Eb,
-            Note::Eb => &Note::E,
-            Note::E => &Note::F,
-            Note::F => &Note::Gb,
-            Note::Gb => &Note::G,
-            Note::G => &Note::Ab,
-            Note::Ab => &Note::A,
-            Note::A => &Note::Bb,
-            Note::Bb => &Note::B,
-            Note::B => &Note::C,
+            Note::C => Note::Db,
+            Note::Db => Note::D,
+            Note::D => Note::Eb,
+            Note::Eb => Note::E,
+            Note::E => Note::F,
+            Note::F => Note::Gb,
+            Note::Gb => Note::G,
+            Note::G => Note::Ab,
+            Note::Ab => Note::A,
+            Note::A => Note::Bb,
+            Note::Bb => Note::B,
+            Note::B => Note::C,
         }
+    }
+}
+
+impl Iterator for Note {
+    type Item = Note;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        *self = self.half_step_up();
+        Some(*self)
     }
 }
