@@ -1,3 +1,5 @@
+pub mod modes;
+
 use modes::DiatonicMode;
 
 use crate::intervals::Interval;
@@ -13,46 +15,8 @@ const MAJOR_INTERVALS: &'static [Interval; 7] = &[
     Interval::MajorSeventh,
 ];
 
-mod modes {
-    use crate::intervals::Interval;
-
-    pub enum DiatonicMode {
-        Ionian,
-        Dorian,
-        Phrygian,
-        Lydian,
-        Mixolydian,
-        Aeolian,
-        Locrian,
-    }
-
-    impl DiatonicMode {
-        pub fn intervals(&self) -> Vec<Interval> {
-            let shift = match self {
-                DiatonicMode::Ionian => 0,
-                DiatonicMode::Dorian => 1,
-                DiatonicMode::Phrygian => 2,
-                DiatonicMode::Lydian => 3,
-                DiatonicMode::Mixolydian => 4,
-                DiatonicMode::Aeolian => 5,
-                DiatonicMode::Locrian => 6,
-            };
-
-            let mut ints: [Interval; 7] = super::MAJOR_INTERVALS.clone();
-            ints.rotate_left(shift);
-
-            let offset = ints[0].semitones();
-            ints.iter()
-                .map(|int| Interval::diatonic_interval(int.semitones() + 12 - offset))
-                .collect()
-        }
-    }
-}
-
 fn generate_scale(key: &Note, intervals: &[Interval]) -> Vec<Note> {
-    let mut res: Vec<Note> = intervals.iter()
-        .map(|int| int.apply_to_note(key))
-        .collect();
+    let mut res: Vec<Note> = intervals.iter().map(|int| int.apply_to_note(key)).collect();
     res.push(key.to_owned());
     res
 }

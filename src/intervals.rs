@@ -1,6 +1,6 @@
 use crate::note::Note;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Interval {
     PerfectUnison,
     MinorSecond,
@@ -67,24 +67,6 @@ impl Interval {
     pub fn apply_to_note(&self, note: &Note) -> Note {
         note.semitone_up(self.semitones())
     }
-
-    pub fn diatonic_interval(semitone: usize) -> Interval {
-        match semitone % 12 {
-            0 => Interval::PerfectUnison,
-            1 => Interval::MinorSecond,
-            2 => Interval::MajorSecond,
-            3 => Interval::MinorThird,
-            4 => Interval::MajorThird,
-            5 => Interval::PerfectFourth,
-            6 => Interval::DiminishedFifth,
-            7 => Interval::PerfectFifth,
-            8 => Interval::MinorSixth,
-            9 => Interval::MajorSixth,
-            10 => Interval::MinorSeventh,
-            11 => Interval::MajorSeventh,
-            _ => panic!("Unreachable case")
-        }
-    }
 }
 
 #[cfg(test)]
@@ -128,12 +110,4 @@ mod tests {
     interval_test!(check_augmented_sixth, C, Interval::AugmentedSixth, Bb);
     interval_test!(check_major_seventh, C, Interval::MajorSeventh, B);
     interval_test!(check_diminished_octave, C, Interval::DiminishedOctave, B);
-
-    #[test]
-    fn diatonic_interval_from_semitones() {
-        for i in 0..100 {
-            let int = Interval::diatonic_interval(i);
-            assert_eq!(int.semitones(), i % 12);
-        }
-    }
 }
