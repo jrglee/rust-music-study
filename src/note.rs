@@ -34,8 +34,9 @@ impl Note {
 
     pub fn semitone_up(&self, semitones: usize) -> Note {
         let mut note = self.to_owned();
+        let actual_semitones = semitones % 12;
 
-        for _ in 0..semitones {
+        for _ in 0..actual_semitones {
             note = note.half_step_up()
         }
 
@@ -61,6 +62,30 @@ impl Note {
     pub fn perfect_fourth(&self) -> Note {
         self.semitone_up(5)
     }
+
+    pub fn diminished_fifth(&self) -> Note {
+        self.semitone_up(6)
+    }
+
+    pub fn perfect_fifth(&self) -> Note {
+        self.semitone_up(7)
+    }
+
+    pub fn minor_sixth(&self) -> Note {
+        self.semitone_up(8)
+    }
+
+    pub fn major_sixth(&self) -> Note {
+        self.semitone_up(9)
+    }
+
+    pub fn minor_seventh(&self) -> Note {
+        self.semitone_up(10)
+    }
+
+    pub fn major_seventh(&self) -> Note {
+        self.semitone_up(11)
+    }
 }
 
 impl Iterator for Note {
@@ -74,7 +99,7 @@ impl Iterator for Note {
 
 #[cfg(test)]
 mod tests {
-    use crate::note::Note::{Db, Eb, C, D, E, F};
+    use crate::note::Note::{Ab, Bb, Db, Eb, Gb, A, B, C, D, E, F, G};
 
     #[test]
     fn get_half_step_up() {
@@ -110,5 +135,35 @@ mod tests {
     #[test]
     fn get_perfect_fourth() {
         assert_eq!(C.perfect_fourth(), F);
+    }
+
+    #[test]
+    fn get_diminished_fifth() {
+        assert_eq!(C.diminished_fifth(), Gb);
+    }
+
+    #[test]
+    fn get_perfect_fifth() {
+        assert_eq!(C.perfect_fifth(), G);
+    }
+
+    #[test]
+    fn get_minor_sixth() {
+        assert_eq!(C.minor_sixth(), Ab);
+    }
+
+    #[test]
+    fn get_major_sixth() {
+        assert_eq!(C.major_sixth(), A);
+    }
+
+    #[test]
+    fn get_minor_seventh() {
+        assert_eq!(C.minor_seventh(), Bb);
+    }
+
+    #[test]
+    fn get_major_seventh() {
+        assert_eq!(C.major_seventh(), B);
     }
 }
