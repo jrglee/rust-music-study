@@ -1,5 +1,15 @@
 use crate::intervals::Interval;
 
+const IONIAN_INTERVALS: &'static [Interval; 7] = &[
+    Interval::PerfectUnison,
+    Interval::MajorSecond,
+    Interval::MajorThird,
+    Interval::PerfectFourth,
+    Interval::PerfectFifth,
+    Interval::MajorSixth,
+    Interval::MajorSeventh,
+];
+
 pub enum DiatonicMode {
     Ionian,
     Dorian,
@@ -13,7 +23,7 @@ pub enum DiatonicMode {
 impl DiatonicMode {
     pub fn intervals(&self) -> [Interval; 7] {
         let shift = self.shift_from_ionian();
-        let mut ints: [Interval; 7] = super::MAJOR_INTERVALS.clone();
+        let mut ints: [Interval; 7] = IONIAN_INTERVALS.clone();
         ints.rotate_left(shift);
 
         let offset = ints[0].semitones();

@@ -1,19 +1,6 @@
-pub mod modes;
-
-use modes::DiatonicMode;
-
 use crate::intervals::Interval;
+use crate::modes::DiatonicMode;
 use crate::note::Note;
-
-const MAJOR_INTERVALS: &'static [Interval; 7] = &[
-    Interval::PerfectUnison,
-    Interval::MajorSecond,
-    Interval::MajorThird,
-    Interval::PerfectFourth,
-    Interval::PerfectFifth,
-    Interval::MajorSixth,
-    Interval::MajorSeventh,
-];
 
 fn generate_scale(key: &Note, intervals: &[Interval]) -> Vec<Note> {
     let mut res: Vec<Note> = intervals.iter().map(|int| int.apply_to_note(key)).collect();
