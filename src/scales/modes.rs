@@ -11,7 +11,7 @@ pub enum DiatonicMode {
 }
 
 impl DiatonicMode {
-    pub fn intervals(&self) -> Vec<Interval> {
+    pub fn intervals(&self) -> [Interval; 7] {
         let shift = self.shift_from_ionian();
         let mut ints: [Interval; 7] = super::MAJOR_INTERVALS.clone();
         ints.rotate_left(shift);
@@ -19,7 +19,9 @@ impl DiatonicMode {
         let offset = ints[0].semitones();
         ints.iter()
             .map(|int| diatonic_interval(int.semitones() + 12 - offset, Some(self)))
-            .collect()
+            .collect::<Vec<Interval>>()
+            .try_into()
+            .unwrap()
     }
 
     fn shift_from_ionian(&self) -> usize {
@@ -73,7 +75,7 @@ mod tests {
         };
     }
 
-    mode_interval_test!(lydian_intervals, DiatonicMode::Lydian, vec![
+    mode_interval_test!(lydian_intervals, DiatonicMode::Lydian, [
         PerfectUnison,
         MajorSecond,
         MajorThird,
@@ -83,7 +85,7 @@ mod tests {
         MajorSeventh,
     ]);
 
-    mode_interval_test!(ionian_intervals, DiatonicMode::Ionian, vec![
+    mode_interval_test!(ionian_intervals, DiatonicMode::Ionian, [
         PerfectUnison,
         MajorSecond,
         MajorThird,
@@ -93,7 +95,7 @@ mod tests {
         MajorSeventh,
     ]);
 
-    mode_interval_test!(mixolydian_intervals, DiatonicMode::Mixolydian, vec![
+    mode_interval_test!(mixolydian_intervals, DiatonicMode::Mixolydian, [
         PerfectUnison,
         MajorSecond,
         MajorThird,
@@ -103,7 +105,7 @@ mod tests {
         MinorSeventh,
     ]);
 
-    mode_interval_test!(dorian_intervals, DiatonicMode::Dorian, vec![
+    mode_interval_test!(dorian_intervals, DiatonicMode::Dorian, [
         PerfectUnison,
         MajorSecond,
         MinorThird,
@@ -113,7 +115,7 @@ mod tests {
         MinorSeventh,
     ]);
 
-    mode_interval_test!(aeolian_intervals, DiatonicMode::Aeolian, vec![
+    mode_interval_test!(aeolian_intervals, DiatonicMode::Aeolian, [
         PerfectUnison,
         MajorSecond,
         MinorThird,
@@ -123,7 +125,7 @@ mod tests {
         MinorSeventh,
     ]);
 
-    mode_interval_test!(phrygian_phrygian, DiatonicMode::Phrygian, vec![
+    mode_interval_test!(phrygian_phrygian, DiatonicMode::Phrygian, [
         PerfectUnison,
         MinorSecond,
         MinorThird,
@@ -133,7 +135,7 @@ mod tests {
         MinorSeventh,
     ]);
 
-    mode_interval_test!(locrian_phrygian, DiatonicMode::Locrian, vec![
+    mode_interval_test!(locrian_phrygian, DiatonicMode::Locrian, [
         PerfectUnison,
         MinorSecond,
         MinorThird,
