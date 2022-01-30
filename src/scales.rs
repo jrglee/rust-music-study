@@ -1,10 +1,21 @@
 use modes::DiatonicMode;
 
+use crate::intervals::Interval;
 use crate::note::Note;
 
-const MAJOR_INTERVALS: &'static [u8] = &[2, 2, 1, 2, 2, 2, 1];
+const MAJOR_INTERVALS: &'static [Interval; 7] = &[
+    Interval::PerfectUnison,
+    Interval::MajorSecond,
+    Interval::MajorThird,
+    Interval::PerfectFourth,
+    Interval::PerfectFifth,
+    Interval::MajorSixth,
+    Interval::MajorSeventh,
+];
 
 mod modes {
+    use crate::intervals::Interval;
+
     pub enum DiatonicMode {
         Ionian,
         Dorian,
@@ -16,7 +27,7 @@ mod modes {
     }
 
     impl DiatonicMode {
-        pub fn intervals(&self) -> Vec<u8> {
+        pub fn intervals(&self) -> Vec<Interval> {
             let shift = match self {
                 DiatonicMode::Ionian => 0,
                 DiatonicMode::Dorian => 1,
@@ -27,25 +38,27 @@ mod modes {
                 DiatonicMode::Locrian => 6,
             };
 
-            let mut int: Vec<u8> = super::MAJOR_INTERVALS.to_vec();
-            int.rotate_left(shift);
-            int
+            let mut ints: [Interval; 7] = super::MAJOR_INTERVALS.clone();
+            ints.rotate_left(shift);
+
+            let offset = ints[0].semitones();
+            ints.iter()
+                .map(|int| Interval::diatonic_interval(int.semitones() + 12 - offset))
+                .collect()
         }
     }
 }
 
-fn generate_scale(key: &Note, intervals: &[u8]) -> Vec<Note> {
-    let mut res: Vec<Note> = vec![key.to_owned()];
-    for &i in intervals.iter() {
-        if let Some(&previous) = &res.last() {
-            res.push(previous.semitone_up(i as usize));
-        }
-    }
+fn generate_scale(key: &Note, intervals: &[Interval]) -> Vec<Note> {
+    let mut res: Vec<Note> = intervals.iter()
+        .map(|int| int.apply_to_note(key))
+        .collect();
+    res.push(key.to_owned());
     res
 }
 
 pub fn major(key: &Note) -> Vec<Note> {
-    generate_scale(key, MAJOR_INTERVALS)
+    generate_scale(key, &DiatonicMode::Ionian.intervals())
 }
 
 pub fn minor(key: &Note) -> Vec<Note> {
