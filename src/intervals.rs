@@ -65,7 +65,7 @@ impl Interval {
     }
 
     pub fn apply_to_note(&self, note: &Note) -> Note {
-        note.semitone_up(self.semitones())
+        note.semitones_up(self.semitones())
     }
 }
 
@@ -79,7 +79,7 @@ mod tests {
         ($name:ident, $start:expr, $interv:expr, $expected:expr) => {
             #[test]
             fn $name() {
-                assert_eq!($start.semitone_up($interv.semitones()), $expected);
+                assert_eq!($start.semitones_up($interv.semitones()), $expected);
             }
         };
     }
