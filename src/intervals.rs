@@ -84,7 +84,7 @@ mod tests {
         };
     }
 
-    interval_test!(check_perfect_unison, C, Interval::PerfectOctave, C);
+    interval_test!(check_perfect_unison, C, Interval::PerfectUnison, C);
     interval_test!(check_perfect_octave, C, Interval::PerfectOctave, C);
     interval_test!(check_diminished_second, C, Interval::DiminishedSecond, C);
     interval_test!(check_augmented_seventh, C, Interval::AugmentedSeventh, C);
