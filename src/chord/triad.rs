@@ -12,12 +12,36 @@ pub enum Triad {
 impl Triad {
     pub fn intervals(&self) -> [Interval; 3] {
         match self {
-            Triad::Major => [Interval::PerfectUnison, Interval::MajorThird, Interval::PerfectFifth],
-            Triad::Minor => [Interval::PerfectUnison, Interval::MinorThird, Interval::PerfectFifth],
-            Triad::Diminished => [Interval::PerfectUnison, Interval::MinorThird, Interval::DiminishedFifth],
-            Triad::Augmented => [Interval::PerfectUnison, Interval::MajorThird, Interval::AugmentedFifth],
-            Triad::Sus4 => [Interval::PerfectUnison, Interval::AugmentedThird, Interval::PerfectFifth],
-            Triad::Sus2 => [Interval::PerfectUnison, Interval::DiminishedThird, Interval::PerfectFifth],
+            Triad::Major => [
+                Interval::PerfectUnison,
+                Interval::MajorThird,
+                Interval::PerfectFifth,
+            ],
+            Triad::Minor => [
+                Interval::PerfectUnison,
+                Interval::MinorThird,
+                Interval::PerfectFifth,
+            ],
+            Triad::Diminished => [
+                Interval::PerfectUnison,
+                Interval::MinorThird,
+                Interval::DiminishedFifth,
+            ],
+            Triad::Augmented => [
+                Interval::PerfectUnison,
+                Interval::MajorThird,
+                Interval::AugmentedFifth,
+            ],
+            Triad::Sus4 => [
+                Interval::PerfectUnison,
+                Interval::AugmentedThird,
+                Interval::PerfectFifth,
+            ],
+            Triad::Sus2 => [
+                Interval::PerfectUnison,
+                Interval::DiminishedThird,
+                Interval::PerfectFifth,
+            ],
         }
     }
 }
@@ -36,7 +60,7 @@ mod tests {
                 assert_eq!(ints[1].apply_to_note(&$n1), $n2);
                 assert_eq!(ints[2].apply_to_note(&$n1), $n3);
             }
-        }
+        };
     }
 
     triad_test!(major, Triad::Major, C, E, G);

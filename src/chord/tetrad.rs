@@ -12,12 +12,42 @@ pub enum Tetrad {
 impl Tetrad {
     pub fn intervals(&self) -> [Interval; 4] {
         match self {
-            Tetrad::Major7 => [Interval::PerfectUnison, Interval::MajorThird, Interval::PerfectFifth, Interval::MajorSeventh],
-            Tetrad::Dominant => [Interval::PerfectUnison, Interval::MajorThird, Interval::PerfectFifth, Interval::MinorSeventh],
-            Tetrad::Minor7 => [Interval::PerfectUnison, Interval::MinorThird, Interval::PerfectFifth, Interval::MinorSeventh],
-            Tetrad::MinorMajor7 => [Interval::PerfectUnison, Interval::MinorThird, Interval::PerfectFifth, Interval::MajorSeventh],
-            Tetrad::Minor7Flat5 => [Interval::PerfectUnison, Interval::MinorThird, Interval::DiminishedFifth, Interval::MinorSeventh],
-            Tetrad::Diminished7 => [Interval::PerfectUnison, Interval::MinorThird, Interval::DiminishedFifth, Interval::DiminishedSeventh],
+            Tetrad::Major7 => [
+                Interval::PerfectUnison,
+                Interval::MajorThird,
+                Interval::PerfectFifth,
+                Interval::MajorSeventh,
+            ],
+            Tetrad::Dominant => [
+                Interval::PerfectUnison,
+                Interval::MajorThird,
+                Interval::PerfectFifth,
+                Interval::MinorSeventh,
+            ],
+            Tetrad::Minor7 => [
+                Interval::PerfectUnison,
+                Interval::MinorThird,
+                Interval::PerfectFifth,
+                Interval::MinorSeventh,
+            ],
+            Tetrad::MinorMajor7 => [
+                Interval::PerfectUnison,
+                Interval::MinorThird,
+                Interval::PerfectFifth,
+                Interval::MajorSeventh,
+            ],
+            Tetrad::Minor7Flat5 => [
+                Interval::PerfectUnison,
+                Interval::MinorThird,
+                Interval::DiminishedFifth,
+                Interval::MinorSeventh,
+            ],
+            Tetrad::Diminished7 => [
+                Interval::PerfectUnison,
+                Interval::MinorThird,
+                Interval::DiminishedFifth,
+                Interval::DiminishedSeventh,
+            ],
         }
     }
 }
@@ -37,7 +67,7 @@ mod tests {
                 assert_eq!(ints[2].apply_to_note(&$n1), $n3);
                 assert_eq!(ints[3].apply_to_note(&$n1), $n4);
             }
-        }
+        };
     }
 
     tetrad_test!(major7, Tetrad::Major7, C, E, G, B);

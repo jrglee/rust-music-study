@@ -47,26 +47,23 @@ impl HarmonicMinorMode {
     }
 }
 
-
 fn harmonic_minor_interval(semitone: usize, mode_context: Option<&HarmonicMinorMode>) -> Interval {
     match (mode_context, semitone % 12) {
-        _ => {
-            match semitone % 12 {
-                0 => Interval::PerfectUnison,
-                1 => Interval::MinorSecond,
-                2 => Interval::MajorSecond,
-                3 => Interval::MinorThird,
-                4 => Interval::MajorThird,
-                5 => Interval::PerfectFourth,
-                6 => Interval::AugmentedFourth,
-                7 => Interval::PerfectFifth,
-                8 => Interval::MinorSixth,
-                9 => Interval::MajorSixth,
-                10 => Interval::MinorSeventh,
-                11 => Interval::MajorSeventh,
-                _ => panic!("Unreachable case"),
-            }
-        }
+        _ => match semitone % 12 {
+            0 => Interval::PerfectUnison,
+            1 => Interval::MinorSecond,
+            2 => Interval::MajorSecond,
+            3 => Interval::MinorThird,
+            4 => Interval::MajorThird,
+            5 => Interval::PerfectFourth,
+            6 => Interval::AugmentedFourth,
+            7 => Interval::PerfectFifth,
+            8 => Interval::MinorSixth,
+            9 => Interval::MajorSixth,
+            10 => Interval::MinorSeventh,
+            11 => Interval::MajorSeventh,
+            _ => panic!("Unreachable case"),
+        },
     }
 }
 
@@ -85,33 +82,45 @@ mod tests {
         };
     }
 
-    mode_interval_test!(harmonic_minor_intervals, HarmonicMinorMode::HarmonicMinor, [
-        PerfectUnison,
-        MajorSecond,
-        MinorThird,
-        PerfectFourth,
-        PerfectFifth,
-        MinorSixth,
-        MajorSeventh,
-    ]);
+    mode_interval_test!(
+        harmonic_minor_intervals,
+        HarmonicMinorMode::HarmonicMinor,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MinorThird,
+            PerfectFourth,
+            PerfectFifth,
+            MinorSixth,
+            MajorSeventh,
+        ]
+    );
 
-    mode_interval_test!(dorian_lydian_intervals, HarmonicMinorMode::DorianLydian, [
-        PerfectUnison,
-        MajorSecond,
-        MinorThird,
-        AugmentedFourth,
-        PerfectFifth,
-        MajorSixth,
-        MinorSeventh,
-    ]);
+    mode_interval_test!(
+        dorian_lydian_intervals,
+        HarmonicMinorMode::DorianLydian,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MinorThird,
+            AugmentedFourth,
+            PerfectFifth,
+            MajorSixth,
+            MinorSeventh,
+        ]
+    );
 
-    mode_interval_test!(phrygian_dominant_intervals, HarmonicMinorMode::PhrygianDominant, [
-        PerfectUnison,
-        MinorSecond,
-        MajorThird,
-        PerfectFourth,
-        PerfectFifth,
-        MinorSixth,
-        MinorSeventh,
-    ]);
+    mode_interval_test!(
+        phrygian_dominant_intervals,
+        HarmonicMinorMode::PhrygianDominant,
+        [
+            PerfectUnison,
+            MinorSecond,
+            MajorThird,
+            PerfectFourth,
+            PerfectFifth,
+            MinorSixth,
+            MinorSeventh,
+        ]
+    );
 }

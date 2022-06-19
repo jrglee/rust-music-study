@@ -50,23 +50,21 @@ impl DiatonicMode {
 fn diatonic_interval(semitone: usize, mode_context: Option<&DiatonicMode>) -> Interval {
     match (mode_context, semitone % 12) {
         (Some(DiatonicMode::Locrian), 6) => Interval::DiminishedFifth,
-        _ => {
-            match semitone % 12 {
-                0 => Interval::PerfectUnison,
-                1 => Interval::MinorSecond,
-                2 => Interval::MajorSecond,
-                3 => Interval::MinorThird,
-                4 => Interval::MajorThird,
-                5 => Interval::PerfectFourth,
-                6 => Interval::AugmentedFourth,
-                7 => Interval::PerfectFifth,
-                8 => Interval::MinorSixth,
-                9 => Interval::MajorSixth,
-                10 => Interval::MinorSeventh,
-                11 => Interval::MajorSeventh,
-                _ => panic!("Unreachable case"),
-            }
-        }
+        _ => match semitone % 12 {
+            0 => Interval::PerfectUnison,
+            1 => Interval::MinorSecond,
+            2 => Interval::MajorSecond,
+            3 => Interval::MinorThird,
+            4 => Interval::MajorThird,
+            5 => Interval::PerfectFourth,
+            6 => Interval::AugmentedFourth,
+            7 => Interval::PerfectFifth,
+            8 => Interval::MinorSixth,
+            9 => Interval::MajorSixth,
+            10 => Interval::MinorSeventh,
+            11 => Interval::MajorSeventh,
+            _ => panic!("Unreachable case"),
+        },
     }
 }
 
@@ -85,73 +83,101 @@ mod tests {
         };
     }
 
-    mode_interval_test!(lydian_intervals, DiatonicMode::Lydian, [
-        PerfectUnison,
-        MajorSecond,
-        MajorThird,
-        AugmentedFourth,
-        PerfectFifth,
-        MajorSixth,
-        MajorSeventh,
-    ]);
+    mode_interval_test!(
+        lydian_intervals,
+        DiatonicMode::Lydian,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MajorThird,
+            AugmentedFourth,
+            PerfectFifth,
+            MajorSixth,
+            MajorSeventh,
+        ]
+    );
 
-    mode_interval_test!(ionian_intervals, DiatonicMode::Ionian, [
-        PerfectUnison,
-        MajorSecond,
-        MajorThird,
-        PerfectFourth,
-        PerfectFifth,
-        MajorSixth,
-        MajorSeventh,
-    ]);
+    mode_interval_test!(
+        ionian_intervals,
+        DiatonicMode::Ionian,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MajorThird,
+            PerfectFourth,
+            PerfectFifth,
+            MajorSixth,
+            MajorSeventh,
+        ]
+    );
 
-    mode_interval_test!(mixolydian_intervals, DiatonicMode::Mixolydian, [
-        PerfectUnison,
-        MajorSecond,
-        MajorThird,
-        PerfectFourth,
-        PerfectFifth,
-        MajorSixth,
-        MinorSeventh,
-    ]);
+    mode_interval_test!(
+        mixolydian_intervals,
+        DiatonicMode::Mixolydian,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MajorThird,
+            PerfectFourth,
+            PerfectFifth,
+            MajorSixth,
+            MinorSeventh,
+        ]
+    );
 
-    mode_interval_test!(dorian_intervals, DiatonicMode::Dorian, [
-        PerfectUnison,
-        MajorSecond,
-        MinorThird,
-        PerfectFourth,
-        PerfectFifth,
-        MajorSixth,
-        MinorSeventh,
-    ]);
+    mode_interval_test!(
+        dorian_intervals,
+        DiatonicMode::Dorian,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MinorThird,
+            PerfectFourth,
+            PerfectFifth,
+            MajorSixth,
+            MinorSeventh,
+        ]
+    );
 
-    mode_interval_test!(aeolian_intervals, DiatonicMode::Aeolian, [
-        PerfectUnison,
-        MajorSecond,
-        MinorThird,
-        PerfectFourth,
-        PerfectFifth,
-        MinorSixth,
-        MinorSeventh,
-    ]);
+    mode_interval_test!(
+        aeolian_intervals,
+        DiatonicMode::Aeolian,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MinorThird,
+            PerfectFourth,
+            PerfectFifth,
+            MinorSixth,
+            MinorSeventh,
+        ]
+    );
 
-    mode_interval_test!(phrygian_phrygian, DiatonicMode::Phrygian, [
-        PerfectUnison,
-        MinorSecond,
-        MinorThird,
-        PerfectFourth,
-        PerfectFifth,
-        MinorSixth,
-        MinorSeventh,
-    ]);
+    mode_interval_test!(
+        phrygian_phrygian,
+        DiatonicMode::Phrygian,
+        [
+            PerfectUnison,
+            MinorSecond,
+            MinorThird,
+            PerfectFourth,
+            PerfectFifth,
+            MinorSixth,
+            MinorSeventh,
+        ]
+    );
 
-    mode_interval_test!(locrian_phrygian, DiatonicMode::Locrian, [
-        PerfectUnison,
-        MinorSecond,
-        MinorThird,
-        PerfectFourth,
-        DiminishedFifth,
-        MinorSixth,
-        MinorSeventh,
-    ]);
+    mode_interval_test!(
+        locrian_phrygian,
+        DiatonicMode::Locrian,
+        [
+            PerfectUnison,
+            MinorSecond,
+            MinorThird,
+            PerfectFourth,
+            DiminishedFifth,
+            MinorSixth,
+            MinorSeventh,
+        ]
+    );
 }
