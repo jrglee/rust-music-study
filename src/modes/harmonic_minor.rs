@@ -49,6 +49,10 @@ impl HarmonicMinorMode {
 
 fn harmonic_minor_interval(semitone: usize, mode_context: Option<&HarmonicMinorMode>) -> Interval {
     match (mode_context, semitone % 12) {
+        (Some(HarmonicMinorMode::IonianAug5), 8) => Interval::AugmentedFifth,
+        (Some(HarmonicMinorMode::SuperLocrian), 4) => Interval::DiminishedFourth,
+        (Some(HarmonicMinorMode::SuperLocrian), 6) => Interval::DiminishedFifth,
+        (Some(HarmonicMinorMode::SuperLocrian), 9) => Interval::DiminishedSeventh,
         _ => match semitone % 12 {
             0 => Interval::PerfectUnison,
             1 => Interval::MinorSecond,
@@ -97,6 +101,20 @@ mod tests {
     );
 
     mode_interval_test!(
+        ionian_aug5_intervals,
+        HarmonicMinorMode::IonianAug5,
+        [
+            PerfectUnison,
+            MajorSecond,
+            MajorThird,
+            PerfectFourth,
+            AugmentedFifth,
+            MajorSixth,
+            MajorSeventh
+        ]
+    );
+
+    mode_interval_test!(
         dorian_lydian_intervals,
         HarmonicMinorMode::DorianLydian,
         [
@@ -121,6 +139,20 @@ mod tests {
             PerfectFifth,
             MinorSixth,
             MinorSeventh,
+        ]
+    );
+
+    mode_interval_test!(
+        super_locrian_intervals,
+        HarmonicMinorMode::SuperLocrian,
+        [
+            PerfectUnison,
+            MinorSecond,
+            MinorThird,
+            DiminishedFourth,
+            DiminishedFifth,
+            MinorSixth,
+            DiminishedSeventh,
         ]
     );
 }
