@@ -1,4 +1,4 @@
-use crate::intervals::Interval;
+use crate::interval::Interval;
 
 const HARMONIC_MINOR_INTERVALS: &'static [Interval; 7] = &[
     Interval::PerfectUnison,
@@ -75,7 +75,7 @@ fn harmonic_minor_interval(semitone: usize, mode_context: Option<&HarmonicMinorM
 mod tests {
     use super::*;
 
-    use crate::intervals::Interval::*;
+    use crate::interval::Interval::*;
 
     macro_rules! mode_interval_test {
         ($name:ident, $mode:expr, $intervals:expr) => {

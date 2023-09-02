@@ -1,5 +1,5 @@
 pub mod chord;
-pub mod intervals;
+pub mod interval;
 pub mod modes;
 pub mod note;
 pub mod scales;

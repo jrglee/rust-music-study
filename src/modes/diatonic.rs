@@ -1,15 +1,9 @@
-use crate::intervals::Interval;
+use crate::interval::Interval;
+use crate::scales::Degree;
 
-const IONIAN_INTERVALS: &'static [Interval; 7] = &[
-    Interval::PerfectUnison,
-    Interval::MajorSecond,
-    Interval::MajorThird,
-    Interval::PerfectFourth,
-    Interval::PerfectFifth,
-    Interval::MajorSixth,
-    Interval::MajorSeventh,
-];
+const SEMITONES: &'static [usize; 7] = &[2, 2, 1, 2, 2, 2, 1];
 
+#[derive(Debug)]
 pub enum DiatonicMode {
     Ionian,
     Dorian,
@@ -22,57 +16,48 @@ pub enum DiatonicMode {
 
 impl DiatonicMode {
     pub fn intervals(&self) -> [Interval; 7] {
-        let shift = self.shift_from_ionian();
-        let mut ints: [Interval; 7] = IONIAN_INTERVALS.clone();
-        ints.rotate_left(shift);
-
-        let offset = ints[0].semitones();
-        ints.iter()
-            .map(|int| diatonic_interval(int.semitones() + 12 - offset, Some(self)))
-            .collect::<Vec<Interval>>()
-            .try_into()
-            .unwrap()
+        [
+            self.interval_for(Degree::First),
+            self.interval_for(Degree::Second),
+            self.interval_for(Degree::Third),
+            self.interval_for(Degree::Fourth),
+            self.interval_for(Degree::Fifth),
+            self.interval_for(Degree::Sixth),
+            self.interval_for(Degree::Seventh),
+        ]
     }
 
-    fn shift_from_ionian(&self) -> usize {
+    fn starting_degree(&self) -> Degree {
         match self {
-            DiatonicMode::Ionian => 0,
-            DiatonicMode::Dorian => 1,
-            DiatonicMode::Phrygian => 2,
-            DiatonicMode::Lydian => 3,
-            DiatonicMode::Mixolydian => 4,
-            DiatonicMode::Aeolian => 5,
-            DiatonicMode::Locrian => 6,
+            DiatonicMode::Ionian => Degree::First,
+            DiatonicMode::Dorian => Degree::Second,
+            DiatonicMode::Phrygian => Degree::Third,
+            DiatonicMode::Lydian => Degree::Fourth,
+            DiatonicMode::Mixolydian => Degree::Fifth,
+            DiatonicMode::Aeolian => Degree::Sixth,
+            DiatonicMode::Locrian => Degree::Seventh,
         }
     }
-}
 
-fn diatonic_interval(semitone: usize, mode_context: Option<&DiatonicMode>) -> Interval {
-    match (mode_context, semitone % 12) {
-        (Some(DiatonicMode::Locrian), 6) => Interval::DiminishedFifth,
-        _ => match semitone % 12 {
-            0 => Interval::PerfectUnison,
-            1 => Interval::MinorSecond,
-            2 => Interval::MajorSecond,
-            3 => Interval::MinorThird,
-            4 => Interval::MajorThird,
-            5 => Interval::PerfectFourth,
-            6 => Interval::AugmentedFourth,
-            7 => Interval::PerfectFifth,
-            8 => Interval::MinorSixth,
-            9 => Interval::MajorSixth,
-            10 => Interval::MinorSeventh,
-            11 => Interval::MajorSeventh,
-            _ => panic!("Unreachable case"),
-        },
+    fn interval_for(&self, degree: Degree) -> Interval {
+        let mut shifted = vec![];
+        shifted.extend_from_slice(SEMITONES);
+        shifted.rotate_left(self.starting_degree().as_number() - 1);
+
+        let semitones = shifted.iter().take(degree.as_number() - 1).sum();
+
+        match degree.interval(semitones) {
+            Some(interval) => interval,
+            None => panic!("Unreachable case"),
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use crate::interval::Interval::*;
 
-    use crate::intervals::Interval::*;
+    use super::*;
 
     macro_rules! mode_interval_test {
         ($name:ident, $mode:expr, $intervals:expr) => {

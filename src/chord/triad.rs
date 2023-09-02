@@ -1,4 +1,4 @@
-use crate::intervals::Interval;
+use crate::interval::Interval;
 
 pub enum Triad {
     Major,
