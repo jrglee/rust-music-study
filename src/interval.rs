@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::note::Note;
-use crate::scales::degree::Degree;
+use crate::scales::Degree;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Interval {
