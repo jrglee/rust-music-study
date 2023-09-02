@@ -1,10 +1,10 @@
 use crate::interval::Interval;
-use crate::scales::Degree;
+use crate::scales::degree::Degree;
 
 const SEMITONES: &'static [usize; 7] = &[2, 2, 1, 2, 2, 2, 1];
 
 #[derive(Debug)]
-pub enum DiatonicMode {
+pub enum Mode {
     Ionian,
     Dorian,
     Phrygian,
@@ -14,7 +14,7 @@ pub enum DiatonicMode {
     Locrian,
 }
 
-impl DiatonicMode {
+impl Mode {
     pub fn intervals(&self) -> [Interval; 7] {
         [
             self.interval_for(Degree::First),
@@ -29,13 +29,13 @@ impl DiatonicMode {
 
     fn starting_degree(&self) -> Degree {
         match self {
-            DiatonicMode::Ionian => Degree::First,
-            DiatonicMode::Dorian => Degree::Second,
-            DiatonicMode::Phrygian => Degree::Third,
-            DiatonicMode::Lydian => Degree::Fourth,
-            DiatonicMode::Mixolydian => Degree::Fifth,
-            DiatonicMode::Aeolian => Degree::Sixth,
-            DiatonicMode::Locrian => Degree::Seventh,
+            Mode::Ionian => Degree::First,
+            Mode::Dorian => Degree::Second,
+            Mode::Phrygian => Degree::Third,
+            Mode::Lydian => Degree::Fourth,
+            Mode::Mixolydian => Degree::Fifth,
+            Mode::Aeolian => Degree::Sixth,
+            Mode::Locrian => Degree::Seventh,
         }
     }
 
@@ -70,7 +70,7 @@ mod tests {
 
     mode_interval_test!(
         lydian_intervals,
-        DiatonicMode::Lydian,
+        Mode::Lydian,
         [
             PerfectUnison,
             MajorSecond,
@@ -84,7 +84,7 @@ mod tests {
 
     mode_interval_test!(
         ionian_intervals,
-        DiatonicMode::Ionian,
+        Mode::Ionian,
         [
             PerfectUnison,
             MajorSecond,
@@ -98,7 +98,7 @@ mod tests {
 
     mode_interval_test!(
         mixolydian_intervals,
-        DiatonicMode::Mixolydian,
+        Mode::Mixolydian,
         [
             PerfectUnison,
             MajorSecond,
@@ -112,7 +112,7 @@ mod tests {
 
     mode_interval_test!(
         dorian_intervals,
-        DiatonicMode::Dorian,
+        Mode::Dorian,
         [
             PerfectUnison,
             MajorSecond,
@@ -126,7 +126,7 @@ mod tests {
 
     mode_interval_test!(
         aeolian_intervals,
-        DiatonicMode::Aeolian,
+        Mode::Aeolian,
         [
             PerfectUnison,
             MajorSecond,
@@ -140,7 +140,7 @@ mod tests {
 
     mode_interval_test!(
         phrygian_phrygian,
-        DiatonicMode::Phrygian,
+        Mode::Phrygian,
         [
             PerfectUnison,
             MinorSecond,
@@ -154,7 +154,7 @@ mod tests {
 
     mode_interval_test!(
         locrian_phrygian,
-        DiatonicMode::Locrian,
+        Mode::Locrian,
         [
             PerfectUnison,
             MinorSecond,
