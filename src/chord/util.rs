@@ -1,9 +1,5 @@
-use triad::Triad;
-
+use crate::chord::Triad;
 use crate::note::Note;
-
-pub mod tetrad;
-pub mod triad;
 
 pub fn major(root: Note) -> [Note; 3] {
     triad_notes(Triad::Major, root)
