@@ -1,16 +1,9 @@
 use crate::interval::Interval;
+use crate::scales::{helper, Degree};
 
-const HARMONIC_MINOR_INTERVALS: &'static [Interval; 7] = &[
-    Interval::PerfectUnison,
-    Interval::MajorSecond,
-    Interval::MinorThird,
-    Interval::PerfectFourth,
-    Interval::PerfectFifth,
-    Interval::MinorSixth,
-    Interval::MajorSeventh,
-];
+const SEMITONES: &'static [usize; 7] = &[2, 1, 2, 2, 1, 3, 1];
 
-pub enum HarmonicMinorMode {
+pub enum Mode {
     HarmonicMinor,
     LocrianMaj6,
     IonianAug5,
@@ -20,54 +13,28 @@ pub enum HarmonicMinorMode {
     SuperLocrian,
 }
 
-impl HarmonicMinorMode {
+impl Mode {
     pub fn intervals(&self) -> [Interval; 7] {
-        let shift = self.shift_from_harmonic_minor();
-        let mut ints: [Interval; 7] = HARMONIC_MINOR_INTERVALS.clone();
-        ints.rotate_left(shift);
-
-        let offset = ints[0].semitones();
-        ints.iter()
-            .map(|int| harmonic_minor_interval(int.semitones() + 12 - offset, Some(self)))
-            .collect::<Vec<Interval>>()
-            .try_into()
-            .unwrap()
+        Degree::array().map(|d| self.interval_for(d))
     }
 
-    fn shift_from_harmonic_minor(&self) -> usize {
+    fn starting_degree(&self) -> Degree {
         match self {
-            HarmonicMinorMode::HarmonicMinor => 0,
-            HarmonicMinorMode::LocrianMaj6 => 1,
-            HarmonicMinorMode::IonianAug5 => 2,
-            HarmonicMinorMode::DorianLydian => 3,
-            HarmonicMinorMode::PhrygianDominant => 4,
-            HarmonicMinorMode::LydianAug2 => 5,
-            HarmonicMinorMode::SuperLocrian => 6,
+            Mode::HarmonicMinor => Degree::First,
+            Mode::LocrianMaj6 => Degree::Second,
+            Mode::IonianAug5 => Degree::Third,
+            Mode::DorianLydian => Degree::Fourth,
+            Mode::PhrygianDominant => Degree::Fifth,
+            Mode::LydianAug2 => Degree::Sixth,
+            Mode::SuperLocrian => Degree::Seventh,
         }
     }
-}
 
-fn harmonic_minor_interval(semitone: usize, mode_context: Option<&HarmonicMinorMode>) -> Interval {
-    match (mode_context, semitone % 12) {
-        (Some(HarmonicMinorMode::IonianAug5), 8) => Interval::AugmentedFifth,
-        (Some(HarmonicMinorMode::SuperLocrian), 4) => Interval::DiminishedFourth,
-        (Some(HarmonicMinorMode::SuperLocrian), 6) => Interval::DiminishedFifth,
-        (Some(HarmonicMinorMode::SuperLocrian), 9) => Interval::DiminishedSeventh,
-        _ => match semitone % 12 {
-            0 => Interval::PerfectUnison,
-            1 => Interval::MinorSecond,
-            2 => Interval::MajorSecond,
-            3 => Interval::MinorThird,
-            4 => Interval::MajorThird,
-            5 => Interval::PerfectFourth,
-            6 => Interval::AugmentedFourth,
-            7 => Interval::PerfectFifth,
-            8 => Interval::MinorSixth,
-            9 => Interval::MajorSixth,
-            10 => Interval::MinorSeventh,
-            11 => Interval::MajorSeventh,
-            _ => panic!("Unreachable case"),
-        },
+    fn interval_for(&self, degree: Degree) -> Interval {
+        match helper::interval_for(SEMITONES, self.starting_degree().as_number() - 1, degree) {
+            Some(interval) => interval,
+            None => panic!("Unreachable case"),
+        }
     }
 }
 
@@ -88,7 +55,7 @@ mod tests {
 
     mode_interval_test!(
         harmonic_minor_intervals,
-        HarmonicMinorMode::HarmonicMinor,
+        Mode::HarmonicMinor,
         [
             PerfectUnison,
             MajorSecond,
@@ -102,7 +69,7 @@ mod tests {
 
     mode_interval_test!(
         ionian_aug5_intervals,
-        HarmonicMinorMode::IonianAug5,
+        Mode::IonianAug5,
         [
             PerfectUnison,
             MajorSecond,
@@ -116,7 +83,7 @@ mod tests {
 
     mode_interval_test!(
         dorian_lydian_intervals,
-        HarmonicMinorMode::DorianLydian,
+        Mode::DorianLydian,
         [
             PerfectUnison,
             MajorSecond,
@@ -130,7 +97,7 @@ mod tests {
 
     mode_interval_test!(
         phrygian_dominant_intervals,
-        HarmonicMinorMode::PhrygianDominant,
+        Mode::PhrygianDominant,
         [
             PerfectUnison,
             MinorSecond,
@@ -144,7 +111,7 @@ mod tests {
 
     mode_interval_test!(
         super_locrian_intervals,
-        HarmonicMinorMode::SuperLocrian,
+        Mode::SuperLocrian,
         [
             PerfectUnison,
             MinorSecond,

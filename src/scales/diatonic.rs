@@ -1,5 +1,5 @@
 use crate::interval::Interval;
-use crate::scales::Degree;
+use crate::scales::{helper, Degree};
 
 const SEMITONES: &'static [usize; 7] = &[2, 2, 1, 2, 2, 2, 1];
 
@@ -16,15 +16,7 @@ pub enum Mode {
 
 impl Mode {
     pub fn intervals(&self) -> [Interval; 7] {
-        [
-            self.interval_for(Degree::First),
-            self.interval_for(Degree::Second),
-            self.interval_for(Degree::Third),
-            self.interval_for(Degree::Fourth),
-            self.interval_for(Degree::Fifth),
-            self.interval_for(Degree::Sixth),
-            self.interval_for(Degree::Seventh),
-        ]
+        Degree::array().map(|d| self.interval_for(d))
     }
 
     fn starting_degree(&self) -> Degree {
@@ -40,13 +32,7 @@ impl Mode {
     }
 
     fn interval_for(&self, degree: Degree) -> Interval {
-        let mut shifted = vec![];
-        shifted.extend_from_slice(SEMITONES);
-        shifted.rotate_left(self.starting_degree().as_number() - 1);
-
-        let semitones = shifted.iter().take(degree.as_number() - 1).sum();
-
-        match degree.interval(semitones) {
+        match helper::interval_for(SEMITONES, self.starting_degree().as_number() - 1, degree) {
             Some(interval) => interval,
             None => panic!("Unreachable case"),
         }

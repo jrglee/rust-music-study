@@ -57,8 +57,8 @@ mod tests {
             #[test]
             fn $name() {
                 let ints = $triad.intervals();
-                assert_eq!(ints[1].apply_to_note(&$n1), $n2);
-                assert_eq!(ints[2].apply_to_note(&$n1), $n3);
+                assert_eq!(ints[1].apply_to_note($n1), $n2);
+                assert_eq!(ints[2].apply_to_note($n1), $n3);
             }
         };
     }

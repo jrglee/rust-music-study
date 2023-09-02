@@ -139,7 +139,7 @@ impl Interval {
         }
     }
 
-    pub fn apply_to_note(&self, note: &Note) -> Note {
+    pub fn apply_to_note(&self, note: Note) -> Note {
         note.semitones_up(self.semitones())
     }
 }

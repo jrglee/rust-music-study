@@ -12,6 +12,18 @@ pub enum Degree {
 }
 
 impl Degree {
+    pub fn array() -> [Degree; 7] {
+        [
+            Degree::First,
+            Degree::Second,
+            Degree::Third,
+            Degree::Fourth,
+            Degree::Fifth,
+            Degree::Sixth,
+            Degree::Seventh,
+        ]
+    }
+
     pub fn as_number(&self) -> usize {
         match self {
             Degree::First => 1,
