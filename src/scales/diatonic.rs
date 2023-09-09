@@ -41,21 +41,25 @@ impl Mode {
 
 #[cfg(test)]
 mod tests {
+    use paste::paste;
+
     use crate::interval::Interval::*;
 
     use super::*;
 
     macro_rules! mode_interval_test {
         ($name:ident, $mode:expr, $intervals:expr) => {
-            #[test]
-            fn $name() {
-                assert_eq!($mode.intervals(), $intervals);
+            paste! {
+                #[test]
+                fn [<$name _intervals>]() {
+                    assert_eq!($mode.intervals(), $intervals);
+                }
             }
         };
     }
 
     mode_interval_test!(
-        lydian_intervals,
+        lydian,
         Mode::Lydian,
         [
             PerfectUnison,
@@ -69,7 +73,7 @@ mod tests {
     );
 
     mode_interval_test!(
-        ionian_intervals,
+        ionian,
         Mode::Ionian,
         [
             PerfectUnison,
@@ -83,7 +87,7 @@ mod tests {
     );
 
     mode_interval_test!(
-        mixolydian_intervals,
+        mixolydian,
         Mode::Mixolydian,
         [
             PerfectUnison,
@@ -97,7 +101,7 @@ mod tests {
     );
 
     mode_interval_test!(
-        dorian_intervals,
+        dorian,
         Mode::Dorian,
         [
             PerfectUnison,
@@ -111,7 +115,7 @@ mod tests {
     );
 
     mode_interval_test!(
-        aeolian_intervals,
+        aeolian,
         Mode::Aeolian,
         [
             PerfectUnison,

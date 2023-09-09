@@ -12,26 +12,10 @@ pub enum Triad {
 impl Triad {
     pub fn intervals(&self) -> [Interval; 3] {
         match self {
-            Triad::Major => [
-                Interval::PerfectUnison,
-                Interval::MajorThird,
-                Interval::PerfectFifth,
-            ],
-            Triad::Minor => [
-                Interval::PerfectUnison,
-                Interval::MinorThird,
-                Interval::PerfectFifth,
-            ],
-            Triad::Diminished => [
-                Interval::PerfectUnison,
-                Interval::MinorThird,
-                Interval::DiminishedFifth,
-            ],
-            Triad::Augmented => [
-                Interval::PerfectUnison,
-                Interval::MajorThird,
-                Interval::AugmentedFifth,
-            ],
+            Triad::Major => [Interval::PerfectUnison, Interval::MajorThird, Interval::PerfectFifth],
+            Triad::Minor => [Interval::PerfectUnison, Interval::MinorThird, Interval::PerfectFifth],
+            Triad::Diminished => [Interval::PerfectUnison, Interval::MinorThird, Interval::DiminishedFifth],
+            Triad::Augmented => [Interval::PerfectUnison, Interval::MajorThird, Interval::AugmentedFifth],
             Triad::Sus4 => [
                 Interval::PerfectUnison,
                 Interval::AugmentedThird,
