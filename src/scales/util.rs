@@ -2,18 +2,18 @@ use crate::interval::Interval;
 use crate::note::Note;
 use crate::scales::diatonic::Mode;
 
-fn generate_scale(key: Note, intervals: &[Interval]) -> Vec<Note> {
+pub fn generate_scale(key: Note, intervals: &[Interval]) -> Vec<Note> {
     let mut scale: Vec<Note> = intervals.iter().map(|int| int.apply_to_note(key)).collect();
     scale.push(key);
     scale
 }
 
 pub fn major(key: Note) -> Vec<Note> {
-    generate_scale(key, &Mode::Ionian.intervals())
+    diatonic_mode(key, Mode::Ionian)
 }
 
 pub fn minor(key: Note) -> Vec<Note> {
-    generate_scale(key, &Mode::Aeolian.intervals())
+    diatonic_mode(key, Mode::Aeolian)
 }
 
 pub fn diatonic_mode(key: Note, mode: Mode) -> Vec<Note> {
