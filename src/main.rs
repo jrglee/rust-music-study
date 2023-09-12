@@ -1,4 +1,5 @@
 use clap::{arg, Command};
+
 use music_study::interval::Interval;
 use music_study::note::Note;
 use music_study::scales;
@@ -18,9 +19,7 @@ fn cli() -> Command {
 }
 
 fn parse_note(s: &str) -> Result<Note, String> {
-    let raw = s.parse::<String>().map_err(|_| format!("Could not read `{s}`"))?;
-
-    match raw.to_uppercase().as_str() {
+    match s.to_uppercase().as_str() {
         "C" => Ok(Note::C),
         "C#" | "DB" => Ok(Note::Db),
         "D" => Ok(Note::D),
@@ -38,9 +37,7 @@ fn parse_note(s: &str) -> Result<Note, String> {
 }
 
 fn parse_scale(s: &str) -> Result<Vec<Interval>, String> {
-    let raw = s.parse::<String>().map_err(|_| format!("Could not read `{s}`"))?;
-
-    match raw.to_lowercase().as_str() {
+    match s.to_lowercase().as_str() {
         "major" | "ionian" => Ok(scales::diatonic::Mode::Ionian.intervals().to_vec()),
         "dorian" => Ok(scales::diatonic::Mode::Dorian.intervals().to_vec()),
         "phrygian" => Ok(scales::diatonic::Mode::Phrygian.intervals().to_vec()),
@@ -73,9 +70,7 @@ fn parse_scale(s: &str) -> Result<Vec<Interval>, String> {
 }
 
 fn main() {
-    let matches = cli().get_matches();
-
-    match matches.subcommand() {
+    match cli().get_matches().subcommand() {
         Some(("scale", sub_matches)) => {
             let key = sub_matches.get_one::<Note>("KEY").expect("required");
             let intervals = sub_matches.get_one::<Vec<Interval>>("NAME").expect("required");
@@ -88,8 +83,9 @@ fn main() {
 
 #[cfg(test)]
 mod tests {
-    use music_study::note::Note;
     use paste::paste;
+
+    use music_study::note::Note;
 
     use super::parse_note;
 
@@ -98,11 +94,8 @@ mod tests {
             paste! {
                 #[test]
                 fn [<parse_note_ $name>]() {
-                    let lower = parse_note(&String::from($call).to_uppercase()).unwrap();
-                    assert_eq!(lower, $expected);
-
-                    let upper = parse_note(&String::from($call).to_lowercase()).unwrap();
-                    assert_eq!(upper, $expected);
+                    assert_eq!(parse_note(&String::from($call).to_uppercase()).unwrap(), $expected);
+                    assert_eq!(parse_note(&String::from($call).to_lowercase()).unwrap(), $expected);
                 }
             }
         };
