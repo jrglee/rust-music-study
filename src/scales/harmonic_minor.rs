@@ -1,5 +1,6 @@
 use crate::interval::Interval;
-use crate::scales::{helper, Degree};
+use crate::scales::Degree;
+use super::degree::interval_for;
 
 const SEMITONES: &'static [usize; 7] = &[2, 1, 2, 2, 1, 3, 1];
 
@@ -31,7 +32,7 @@ impl Mode {
     }
 
     fn interval_for(&self, degree: Degree) -> Interval {
-        match helper::interval_for(SEMITONES, self.starting_degree().as_number() - 1, degree) {
+        match interval_for(SEMITONES, self.starting_degree().as_number() - 1, degree) {
             Some(interval) => interval,
             None => panic!("Unreachable case"),
         }
