@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__cachebro__read_files",
+      "Bash(rustc --version)",
+      "Bash(cargo --version)"
+    ]
+  }
+}
