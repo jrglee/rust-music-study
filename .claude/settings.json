@@ -3,7 +3,13 @@
     "allow": [
       "mcp__cachebro__read_files",
       "Bash(rustc --version)",
-      "Bash(cargo --version)"
+      "Bash(cargo --version)",
+      "WebFetch(domain:crates.io)",
+      "Bash(cargo build:*)",
+      "Bash(cargo test:*)",
+      "Bash(rustup show:*)",
+      "Bash(rustup component:*)",
+      "Bash(mise upgrade:*)"
     ]
   }
 }
