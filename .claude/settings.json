@@ -2,15 +2,13 @@
   "permissions": {
     "allow": [
       "mcp__cachebro__read_files",
+      "mcp__cachebro__read_file",
       "Bash(rustc --version)",
-      "Bash(cargo --version)",
+      "Bash(cargo:*)",
       "WebFetch(domain:crates.io)",
-      "Bash(cargo build:*)",
-      "Bash(cargo test:*)",
       "Bash(rustup show:*)",
       "Bash(rustup component:*)",
-      "Bash(mise upgrade:*)",
-      "Bash(cargo search:*)"
+      "Bash(mise upgrade:*)"
     ]
   }
 }
