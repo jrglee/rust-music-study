@@ -35,7 +35,7 @@ impl Mode {
     fn interval_for(&self, degree: Degree) -> Interval {
         match interval_for(SEMITONES, self.starting_degree().as_number() - 1, degree) {
             Some(interval) => interval,
-            None => panic!("Unreachable case"),
+            None => unreachable!(),
         }
     }
 }

@@ -8,17 +8,17 @@ pub fn cli() -> Command {
         .subcommand(scale_subcommand())
 }
 
-fn main() {
+fn main() -> anyhow::Result<()> {
     match cli().get_matches().subcommand() {
-        Some(("scale", m)) => handle(m),
+        Some(("scale", m)) => handle(m)?,
         _ => {
             let choice = inquire::Select::new("What do you want to explore?", vec!["scale"])
-                .prompt()
-                .unwrap();
+                .prompt()?;
             match choice {
-                "scale" => handle_interactive(),
+                "scale" => handle_interactive()?,
                 _ => unreachable!(),
             }
         }
     }
+    Ok(())
 }

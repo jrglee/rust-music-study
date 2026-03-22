@@ -44,8 +44,12 @@ impl Note {
     }
 }
 
+#[derive(Debug, thiserror::Error)]
+#[error("Invalid note {0}")]
+pub struct NoteParseError(String);
+
 impl FromStr for Note {
-    type Err = String;
+    type Err = NoteParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_uppercase().as_str() {
@@ -61,7 +65,7 @@ impl FromStr for Note {
             "A" => Ok(Note::A),
             "A#" | "BB" => Ok(Note::Bb),
             "B" => Ok(Note::B),
-            v => Err(format!("Invalid note {}", v)),
+            v => Err(NoteParseError(v.to_string())),
         }
     }
 }
@@ -80,7 +84,7 @@ fn semitones_to_c(semitones: usize) -> Note {
         9 => Note::A,
         10 => Note::Bb,
         11 => Note::B,
-        _ => panic!("Unreachable case"),
+        _ => unreachable!(),
     }
 }
 
@@ -141,7 +145,7 @@ mod tests {
     #[test]
     fn parse_error() {
         assert_eq!(
-            &String::from("h").to_uppercase().parse::<Note>().unwrap_err(),
+            "h".parse::<Note>().unwrap_err().to_string(),
             "Invalid note H"
         )
     }

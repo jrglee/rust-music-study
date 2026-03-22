@@ -28,6 +28,19 @@ pub enum ScaleName {
     SuperLocrian,
 }
 
+#[derive(Debug, thiserror::Error)]
+#[error("Invalid scale name: {0}")]
+pub struct ScaleNameParseError(String);
+
+impl std::str::FromStr for ScaleName {
+    type Err = ScaleNameParseError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        <ScaleName as clap::ValueEnum>::from_str(s, true)
+            .map_err(ScaleNameParseError)
+    }
+}
+
 impl ScaleName {
     pub fn to_intervals(&self) -> Vec<Interval> {
         match self {
@@ -50,26 +63,26 @@ impl ScaleName {
     }
 }
 
-pub fn handle_interactive() {
+pub fn handle_interactive() -> anyhow::Result<()> {
     let notes = vec!["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
-    let key: Note = Select::new("Key:", notes).prompt().unwrap().parse().unwrap();
+    let key: Note = Select::new("Key:", notes).prompt()?.parse()?;
 
     let options: Vec<String> = ScaleName::value_variants()
         .iter()
         .filter_map(|v| v.to_possible_value().map(|pv| pv.get_name().to_string()))
         .collect();
-    let scale = ScaleName::from_str(&Select::new("Scale:", options).prompt().unwrap(), true).unwrap();
+    let scale: ScaleName = Select::new("Scale:", options).prompt()?.parse()?;
 
     println!("{:?}", scales::generate_scale(key, &scale.to_intervals()));
+    Ok(())
 }
 
-pub fn handle(m: &ArgMatches) {
+pub fn handle(m: &ArgMatches) -> anyhow::Result<()> {
     let key = match m.get_one::<Note>("KEY") {
         Some(k) => *k,
         None => {
             let notes = vec!["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
-            let s = Select::new("Key:", notes).prompt().unwrap();
-            s.parse::<Note>().unwrap()
+            Select::new("Key:", notes).prompt()?.parse()?
         }
     };
     let scale = match m.get_one::<ScaleName>("NAME") {
@@ -79,11 +92,11 @@ pub fn handle(m: &ArgMatches) {
                 .iter()
                 .filter_map(|v| v.to_possible_value().map(|pv| pv.get_name().to_string()))
                 .collect();
-            let selected = Select::new("Select a scale:", options).prompt().unwrap();
-            ScaleName::from_str(&selected, true).unwrap()
+            Select::new("Select a scale:", options).prompt()?.parse()?
         }
     };
     println!("{:?}", scales::generate_scale(key, &scale.to_intervals()));
+    Ok(())
 }
 
 pub fn scale_subcommand() -> Command {
