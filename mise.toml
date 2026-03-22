@@ -1,2 +1,5 @@
 [tools]
 rust = "stable"
+
+[env]
+_.path = ["{{config_root}}/target/debug"]

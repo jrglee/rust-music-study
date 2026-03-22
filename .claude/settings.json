@@ -9,7 +9,8 @@
       "Bash(cargo test:*)",
       "Bash(rustup show:*)",
       "Bash(rustup component:*)",
-      "Bash(mise upgrade:*)"
+      "Bash(mise upgrade:*)",
+      "Bash(cargo search:*)"
     ]
   }
 }

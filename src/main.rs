@@ -1,8 +1,54 @@
-use clap::{arg, Command};
+use clap::{arg, Command, ValueEnum};
+use inquire::Select;
 
-use music_study::interval::Interval;
-use music_study::note::Note;
-use music_study::scales;
+use musicionist::interval::Interval;
+use musicionist::note::Note;
+use musicionist::scales;
+
+#[derive(Clone, clap::ValueEnum)]
+enum ScaleName {
+    // Diatonic modes
+    #[value(alias = "ionian")]
+    Major,
+    Dorian,
+    Phrygian,
+    Lydian,
+    Mixolydian,
+    #[value(alias = "aeolian")]
+    Minor,
+    Locrian,
+
+    // Harmonic minor modes
+    HarmonicMinor,
+    LocrianMaj6,
+    IonianAug5,
+    DorianLydian,
+    PhrygianDominant,
+    LydianAug2,
+    SuperLocrian,
+}
+
+impl ScaleName {
+    fn to_intervals(&self) -> Vec<Interval> {
+        match self {
+            ScaleName::Major => scales::diatonic::Mode::Ionian.intervals().to_vec(),
+            ScaleName::Dorian => scales::diatonic::Mode::Dorian.intervals().to_vec(),
+            ScaleName::Phrygian => scales::diatonic::Mode::Phrygian.intervals().to_vec(),
+            ScaleName::Lydian => scales::diatonic::Mode::Lydian.intervals().to_vec(),
+            ScaleName::Mixolydian => scales::diatonic::Mode::Mixolydian.intervals().to_vec(),
+            ScaleName::Minor => scales::diatonic::Mode::Aeolian.intervals().to_vec(),
+            ScaleName::Locrian => scales::diatonic::Mode::Locrian.intervals().to_vec(),
+
+            ScaleName::HarmonicMinor => scales::harmonic_minor::Mode::HarmonicMinor.intervals().to_vec(),
+            ScaleName::LocrianMaj6 => scales::harmonic_minor::Mode::LocrianMaj6.intervals().to_vec(),
+            ScaleName::IonianAug5 => scales::harmonic_minor::Mode::IonianAug5.intervals().to_vec(),
+            ScaleName::DorianLydian => scales::harmonic_minor::Mode::DorianLydian.intervals().to_vec(),
+            ScaleName::PhrygianDominant => scales::harmonic_minor::Mode::PhrygianDominant.intervals().to_vec(),
+            ScaleName::LydianAug2 => scales::harmonic_minor::Mode::LydianAug2.intervals().to_vec(),
+            ScaleName::SuperLocrian => scales::harmonic_minor::Mode::SuperLocrian.intervals().to_vec(),
+        }
+    }
+}
 
 fn cli() -> Command {
     Command::new("musicionist")
@@ -13,9 +59,12 @@ fn cli() -> Command {
             Command::new("scale")
                 .about("Generate a scale")
                 .arg(arg!(<KEY> "the first note of the scale").value_parser(parse_note))
-                .arg(arg!(<NAME> "the name of the scale, like major or minor").value_parser(parse_scale))
-                .arg_required_else_help(true),
+                .arg(
+                    arg!([NAME] "the name of the scale, like major or minor")
+                        .value_parser(clap::value_parser!(ScaleName)),
+                ),
         )
+        .subcommand(Command::new("list").about("List all available scale names"))
 }
 
 fn parse_note(s: &str) -> Result<Note, String> {
@@ -36,46 +85,29 @@ fn parse_note(s: &str) -> Result<Note, String> {
     }
 }
 
-fn parse_scale(s: &str) -> Result<Vec<Interval>, String> {
-    match s.to_lowercase().as_str() {
-        "major" | "ionian" => Ok(scales::diatonic::Mode::Ionian.intervals().to_vec()),
-        "dorian" => Ok(scales::diatonic::Mode::Dorian.intervals().to_vec()),
-        "phrygian" => Ok(scales::diatonic::Mode::Phrygian.intervals().to_vec()),
-        "lydian" => Ok(scales::diatonic::Mode::Lydian.intervals().to_vec()),
-        "mixolydian" => Ok(scales::diatonic::Mode::Mixolydian.intervals().to_vec()),
-        "minor" | "aeolian" => Ok(scales::diatonic::Mode::Aeolian.intervals().to_vec()),
-        "locrian" => Ok(scales::diatonic::Mode::Locrian.intervals().to_vec()),
-
-        "harmonic minor" | "harmonic-minor" => Ok(scales::harmonic_minor::Mode::HarmonicMinor.intervals().to_vec()),
-        "locrian maj6" | "locrian-maj6" | "locrian major6" | "locrian-major6" => {
-            Ok(scales::harmonic_minor::Mode::LocrianMaj6.intervals().to_vec())
-        }
-        "ionian #5" | "ionian-#5" | "ionian aug5" | "ionian-aug5" => {
-            Ok(scales::harmonic_minor::Mode::IonianAug5.intervals().to_vec())
-        }
-        "dorian lydian" | "dorian-lydian" | "dorian #4" | "dorian-#4" => {
-            Ok(scales::harmonic_minor::Mode::DorianLydian.intervals().to_vec())
-        }
-        "phrygian dominant" | "phrygian-dominant" | "phrygian maj3" | "phrygian-maj3" => {
-            Ok(scales::harmonic_minor::Mode::PhrygianDominant.intervals().to_vec())
-        }
-        "lydian #2" | "lydian-#2" | "lydian aug2" | "lydian-aug2" => {
-            Ok(scales::harmonic_minor::Mode::LydianAug2.intervals().to_vec())
-        }
-        "superlocrian" | "super locrian" | "super-locrian" => {
-            Ok(scales::harmonic_minor::Mode::SuperLocrian.intervals().to_vec())
-        }
-        other => Err(format!("Unrecognizable scale {}", other)),
-    }
-}
-
 fn main() {
     match cli().get_matches().subcommand() {
-        Some(("scale", sub_matches)) => {
-            let key = sub_matches.get_one::<Note>("KEY").expect("required");
-            let intervals = sub_matches.get_one::<Vec<Interval>>("NAME").expect("required");
-
-            println!("{:?}", scales::generate_scale(*key, intervals));
+        Some(("scale", m)) => {
+            let key = m.get_one::<Note>("KEY").expect("required");
+            let scale = match m.get_one::<ScaleName>("NAME") {
+                Some(s) => s.clone(),
+                None => {
+                    let options: Vec<String> = ScaleName::value_variants()
+                        .iter()
+                        .filter_map(|v| v.to_possible_value().map(|pv| pv.get_name().to_string()))
+                        .collect();
+                    let selected = Select::new("Select a scale:", options).prompt().unwrap();
+                    ScaleName::from_str(&selected, true).unwrap()
+                }
+            };
+            println!("{:?}", scales::generate_scale(*key, &scale.to_intervals()));
+        }
+        Some(("list", _)) => {
+            for v in ScaleName::value_variants() {
+                if let Some(pv) = v.to_possible_value() {
+                    println!("{}", pv.get_name());
+                }
+            }
         }
         _ => {}
     }
@@ -85,7 +117,7 @@ fn main() {
 mod tests {
     use paste::paste;
 
-    use music_study::note::Note;
+    use musicionist::note::Note;
 
     use super::parse_note;
 
