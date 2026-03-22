@@ -34,6 +34,24 @@ pub enum Interval {
     AugmentedSeventh,
 }
 
+pub(crate) fn canonical_interval(semitones: usize) -> Interval {
+    match semitones % 12 {
+        0  => Interval::PerfectUnison,
+        1  => Interval::MinorSecond,
+        2  => Interval::MajorSecond,
+        3  => Interval::MinorThird,
+        4  => Interval::MajorThird,
+        5  => Interval::PerfectFourth,
+        6  => Interval::Tritone,
+        7  => Interval::PerfectFifth,
+        8  => Interval::MinorSixth,
+        9  => Interval::MajorSixth,
+        10 => Interval::MinorSeventh,
+        11 => Interval::MajorSeventh,
+        _  => unreachable!(),
+    }
+}
+
 impl Interval {
     pub fn for_degree(degree: &Degree) -> HashSet<Interval> {
         match degree {

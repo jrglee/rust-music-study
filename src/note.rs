@@ -1,4 +1,7 @@
+use std::ops::{Add, Sub};
 use std::str::FromStr;
+
+use crate::interval::{canonical_interval, Interval};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Note {
@@ -17,7 +20,7 @@ pub enum Note {
 }
 
 impl Note {
-    fn semitones_from_c(&self) -> usize {
+    pub(crate) fn semitones_from_c(&self) -> usize {
         match self {
             Note::C => 0,
             Note::Db => 1,
@@ -41,6 +44,21 @@ impl Note {
     pub fn semitones(&self, semitones: isize) -> Note {
         let corrected: usize = (12 + (semitones % 12)) as usize;
         self.semitones_up(corrected)
+    }
+}
+
+impl Add<Interval> for Note {
+    type Output = Note;
+    fn add(self, rhs: Interval) -> Note {
+        rhs.apply_to_note(self)
+    }
+}
+
+impl Sub for Note {
+    type Output = Interval;
+    fn sub(self, rhs: Note) -> Interval {
+        let distance = (self.semitones_from_c() + 12 - rhs.semitones_from_c()) % 12;
+        canonical_interval(distance)
     }
 }
 
@@ -90,7 +108,8 @@ fn semitones_to_c(semitones: usize) -> Note {
 
 #[cfg(test)]
 mod tests {
-    use crate::note::Note;
+    use crate::interval::Interval;
+    use crate::note::{Note, NoteParseError};
     use crate::note::Note::*;
     use rstest::rstest;
 
@@ -130,9 +149,11 @@ mod tests {
     #[case("A#", Bb)]
     #[case("Bb", Bb)]
     #[case("B",  B)]
-    fn parse_note(#[case] input: &str, #[case] expected: Note) {
-        assert_eq!(String::from(input).to_uppercase().parse::<Note>().unwrap(), expected);
-        assert_eq!(String::from(input).to_lowercase().parse::<Note>().unwrap(), expected);
+    fn parse_note(#[case] input: &str, #[case] expected: Note) -> Result<(), NoteParseError> {
+        assert_eq!(String::from(input).to_uppercase().parse::<Note>()?, expected);
+        assert_eq!(String::from(input).to_lowercase().parse::<Note>()?, expected);
+
+        Ok(())
     }
 
     #[test]
@@ -141,5 +162,25 @@ mod tests {
             "h".parse::<Note>().unwrap_err().to_string(),
             "Invalid note H"
         )
+    }
+
+    #[rstest]
+    #[case(C, Interval::MajorThird,   E)]
+    #[case(C, Interval::PerfectFifth, G)]
+    #[case(G, Interval::MajorThird,   B)]
+    #[case(B, Interval::MinorSecond,  C)]
+    #[case(C, Interval::PerfectUnison, C)]
+    fn note_add_interval(#[case] note: Note, #[case] interval: Interval, #[case] expected: Note) {
+        assert_eq!(note + interval, expected);
+    }
+
+    #[rstest]
+    #[case(E, C, Interval::MajorThird)]
+    #[case(G, C, Interval::PerfectFifth)]
+    #[case(C, B, Interval::MinorSecond)]
+    #[case(C, C, Interval::PerfectUnison)]
+    #[case(Bb, C, Interval::MinorSeventh)]
+    fn note_sub_note(#[case] high: Note, #[case] low: Note, #[case] expected: Interval) {
+        assert_eq!(high - low, expected);
     }
 }

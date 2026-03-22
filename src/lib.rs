@@ -3,3 +3,4 @@ pub mod cli;
 pub mod interval;
 pub mod note;
 pub mod scales;
+mod ops;
