@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::interval::Interval;
 
 pub fn interval_for(intervals: &[usize], offset: usize, degree: Degree) -> Option<Interval> {
@@ -46,8 +48,48 @@ impl Degree {
         }
     }
 
+    fn valid_intervals(&self) -> HashSet<Interval> {
+        match self {
+            Degree::First => HashSet::from([Interval::PerfectUnison]),
+            Degree::Second => HashSet::from([
+                Interval::MinorSecond,
+                Interval::MajorSecond,
+                Interval::DiminishedSecond,
+                Interval::AugmentedSecond,
+            ]),
+            Degree::Third => HashSet::from([
+                Interval::MinorThird,
+                Interval::MajorThird,
+                Interval::DiminishedThird,
+                Interval::AugmentedThird,
+            ]),
+            Degree::Fourth => HashSet::from([
+                Interval::PerfectFourth,
+                Interval::DiminishedFourth,
+                Interval::AugmentedFourth,
+            ]),
+            Degree::Fifth => HashSet::from([
+                Interval::PerfectFifth,
+                Interval::DiminishedFifth,
+                Interval::AugmentedFifth,
+            ]),
+            Degree::Sixth => HashSet::from([
+                Interval::MinorSixth,
+                Interval::MajorSixth,
+                Interval::DiminishedSixth,
+                Interval::AugmentedSixth,
+            ]),
+            Degree::Seventh => HashSet::from([
+                Interval::MinorSeventh,
+                Interval::MajorSeventh,
+                Interval::DiminishedSeventh,
+                Interval::AugmentedSeventh,
+            ]),
+        }
+    }
+
     pub fn interval(&self, semitones: usize) -> Option<Interval> {
-        Interval::for_degree(self)
+        self.valid_intervals()
             .iter()
             .find(|c| c.semitones() == semitones)
             .cloned()

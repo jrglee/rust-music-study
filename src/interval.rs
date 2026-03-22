@@ -1,7 +1,4 @@
-use std::collections::HashSet;
-
 use crate::note::Note;
-use crate::scales::Degree;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
 pub enum Interval {
@@ -53,78 +50,6 @@ pub(crate) fn canonical_interval(semitones: usize) -> Interval {
 }
 
 impl Interval {
-    pub fn for_degree(degree: &Degree) -> HashSet<Interval> {
-        match degree {
-            Degree::First => HashSet::from([Interval::PerfectUnison]),
-            Degree::Second => HashSet::from([
-                Interval::MinorSecond,
-                Interval::MajorSecond,
-                Interval::DiminishedSecond,
-                Interval::AugmentedSecond,
-            ]),
-            Degree::Third => HashSet::from([
-                Interval::MinorThird,
-                Interval::MajorThird,
-                Interval::DiminishedThird,
-                Interval::AugmentedThird,
-            ]),
-            Degree::Fourth => HashSet::from([
-                Interval::PerfectFourth,
-                Interval::DiminishedFourth,
-                Interval::AugmentedFourth,
-            ]),
-            Degree::Fifth => HashSet::from([
-                Interval::PerfectFifth,
-                Interval::DiminishedFifth,
-                Interval::AugmentedFifth,
-            ]),
-            Degree::Sixth => HashSet::from([
-                Interval::MinorSixth,
-                Interval::MajorSixth,
-                Interval::DiminishedSixth,
-                Interval::AugmentedSixth,
-            ]),
-            Degree::Seventh => HashSet::from([
-                Interval::MinorSeventh,
-                Interval::MajorSeventh,
-                Interval::DiminishedSeventh,
-                Interval::AugmentedSeventh,
-            ]),
-        }
-    }
-
-    pub fn to_degree(&self) -> Option<Degree> {
-        match self {
-            Interval::PerfectUnison => Some(Degree::First),
-            Interval::MinorSecond => Some(Degree::Second),
-            Interval::MajorSecond => Some(Degree::Second),
-            Interval::MinorThird => Some(Degree::Third),
-            Interval::MajorThird => Some(Degree::Third),
-            Interval::PerfectFourth => Some(Degree::Fourth),
-            Interval::PerfectFifth => Some(Degree::Fifth),
-            Interval::MinorSixth => Some(Degree::Sixth),
-            Interval::MajorSixth => Some(Degree::Sixth),
-            Interval::MinorSeventh => Some(Degree::Seventh),
-            Interval::MajorSeventh => Some(Degree::Seventh),
-            Interval::PerfectOctave => Some(Degree::Fifth),
-            Interval::Tritone => None,
-            Interval::DiminishedSecond => Some(Degree::Second),
-            Interval::DiminishedThird => Some(Degree::Third),
-            Interval::DiminishedFourth => Some(Degree::Fourth),
-            Interval::DiminishedFifth => Some(Degree::Fifth),
-            Interval::DiminishedSixth => Some(Degree::Sixth),
-            Interval::DiminishedSeventh => Some(Degree::Seventh),
-            Interval::DiminishedOctave => Some(Degree::First),
-            Interval::AugmentedUnison => Some(Degree::First),
-            Interval::AugmentedSecond => Some(Degree::Second),
-            Interval::AugmentedThird => Some(Degree::Third),
-            Interval::AugmentedFourth => Some(Degree::Fourth),
-            Interval::AugmentedFifth => Some(Degree::Fifth),
-            Interval::AugmentedSixth => Some(Degree::Sixth),
-            Interval::AugmentedSeventh => Some(Degree::Seventh),
-        }
-    }
-
     pub fn semitones(&self) -> usize {
         match self {
             Interval::PerfectUnison => 0,
