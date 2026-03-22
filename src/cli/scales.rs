@@ -50,8 +50,28 @@ impl ScaleName {
     }
 }
 
+pub fn handle_interactive() {
+    let notes = vec!["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+    let key: Note = Select::new("Key:", notes).prompt().unwrap().parse().unwrap();
+
+    let options: Vec<String> = ScaleName::value_variants()
+        .iter()
+        .filter_map(|v| v.to_possible_value().map(|pv| pv.get_name().to_string()))
+        .collect();
+    let scale = ScaleName::from_str(&Select::new("Scale:", options).prompt().unwrap(), true).unwrap();
+
+    println!("{:?}", scales::generate_scale(key, &scale.to_intervals()));
+}
+
 pub fn handle(m: &ArgMatches) {
-    let key = m.get_one::<Note>("KEY").expect("required");
+    let key = match m.get_one::<Note>("KEY") {
+        Some(k) => *k,
+        None => {
+            let notes = vec!["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"];
+            let s = Select::new("Key:", notes).prompt().unwrap();
+            s.parse::<Note>().unwrap()
+        }
+    };
     let scale = match m.get_one::<ScaleName>("NAME") {
         Some(s) => s.clone(),
         None => {
@@ -63,13 +83,13 @@ pub fn handle(m: &ArgMatches) {
             ScaleName::from_str(&selected, true).unwrap()
         }
     };
-    println!("{:?}", scales::generate_scale(*key, &scale.to_intervals()));
+    println!("{:?}", scales::generate_scale(key, &scale.to_intervals()));
 }
 
 pub fn scale_subcommand() -> Command {
     Command::new("scale")
         .about("Generate a scale")
-        .arg(arg!(<KEY> "the first note of the scale").value_parser(clap::value_parser!(Note)))
+        .arg(arg!([KEY] "the first note of the scale").value_parser(clap::value_parser!(Note)))
         .arg(
             arg!([NAME] "the name of the scale, like major or minor")
                 .value_parser(clap::value_parser!(ScaleName)),
