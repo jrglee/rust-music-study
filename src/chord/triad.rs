@@ -1,5 +1,6 @@
 use crate::interval::Interval;
 
+#[derive(Debug)]
 pub enum Triad {
     Major,
     Minor,
@@ -32,25 +33,23 @@ impl Triad {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
+    use crate::note::Note;
     use crate::note::Note::*;
 
     use super::*;
 
-    macro_rules! triad_test {
-        ($name:ident, $triad:expr, $n1: expr, $n2:expr, $n3:expr) => {
-            #[test]
-            fn $name() {
-                let ints = $triad.intervals();
-                assert_eq!(ints[1].apply_to_note($n1), $n2);
-                assert_eq!(ints[2].apply_to_note($n1), $n3);
-            }
-        };
+    #[rstest]
+    #[case(Triad::Major,     C, E,  G)]
+    #[case(Triad::Minor,     C, Eb, G)]
+    #[case(Triad::Augmented, C, E,  Ab)]
+    #[case(Triad::Diminished, C, Eb, Gb)]
+    #[case(Triad::Sus2,      C, D,  G)]
+    #[case(Triad::Sus4,      C, F,  G)]
+    fn triad_intervals(#[case] chord: Triad, #[case] root: Note, #[case] third: Note, #[case] fifth: Note) {
+        let ints = chord.intervals();
+        assert_eq!(ints[1].apply_to_note(root), third);
+        assert_eq!(ints[2].apply_to_note(root), fifth);
     }
-
-    triad_test!(major, Triad::Major, C, E, G);
-    triad_test!(minor, Triad::Minor, C, Eb, G);
-    triad_test!(augmented, Triad::Augmented, C, E, Ab);
-    triad_test!(diminished, Triad::Diminished, C, Eb, Gb);
-    triad_test!(sus2, Triad::Sus2, C, D, G);
-    triad_test!(sus4, Triad::Sus4, C, F, G);
 }

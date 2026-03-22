@@ -146,47 +146,40 @@ impl Interval {
 
 #[cfg(test)]
 mod tests {
-    use paste::paste;
+    use rstest::rstest;
 
     use crate::note::Note::*;
 
     use super::*;
 
-    macro_rules! interval_test {
-        ($name:ident, $start:expr, $interv:expr, $expected:expr) => {
-            paste! {
-                #[test]
-                fn [<interval_ $name>]() {
-                    assert_eq!($start.semitones_up($interv.semitones()), $expected);
-                }
-            }
-        };
+    #[rstest]
+    #[case(Interval::PerfectUnison,   C)]
+    #[case(Interval::PerfectOctave,   C)]
+    #[case(Interval::DiminishedSecond, C)]
+    #[case(Interval::AugmentedSeventh, C)]
+    #[case(Interval::MinorSecond,     Db)]
+    #[case(Interval::AugmentedUnison, Db)]
+    #[case(Interval::MajorSecond,     D)]
+    #[case(Interval::DiminishedThird, D)]
+    #[case(Interval::MinorThird,      Eb)]
+    #[case(Interval::AugmentedSecond, Eb)]
+    #[case(Interval::MajorThird,      E)]
+    #[case(Interval::DiminishedFourth, E)]
+    #[case(Interval::PerfectFourth,   F)]
+    #[case(Interval::Tritone,         Gb)]
+    #[case(Interval::DiminishedFifth, Gb)]
+    #[case(Interval::AugmentedFourth, Gb)]
+    #[case(Interval::PerfectFifth,    G)]
+    #[case(Interval::DiminishedSixth, G)]
+    #[case(Interval::MinorSixth,      Ab)]
+    #[case(Interval::AugmentedFifth,  Ab)]
+    #[case(Interval::MajorSixth,      A)]
+    #[case(Interval::DiminishedSeventh, A)]
+    #[case(Interval::MinorSeventh,    Bb)]
+    #[case(Interval::AugmentedSixth,  Bb)]
+    #[case(Interval::MajorSeventh,    B)]
+    #[case(Interval::DiminishedOctave, B)]
+    fn interval_from_c(#[case] interv: Interval, #[case] expected: Note) {
+        assert_eq!(C.semitones_up(interv.semitones()), expected);
     }
-
-    interval_test!(perfect_unison, C, Interval::PerfectUnison, C);
-    interval_test!(perfect_octave, C, Interval::PerfectOctave, C);
-    interval_test!(diminished_second, C, Interval::DiminishedSecond, C);
-    interval_test!(augmented_seventh, C, Interval::AugmentedSeventh, C);
-    interval_test!(minor_second, C, Interval::MinorSecond, Db);
-    interval_test!(augmented_unison, C, Interval::AugmentedUnison, Db);
-    interval_test!(major_second, C, Interval::MajorSecond, D);
-    interval_test!(diminished_third, C, Interval::DiminishedThird, D);
-    interval_test!(minor_third, C, Interval::MinorThird, Eb);
-    interval_test!(augmented_second, C, Interval::AugmentedSecond, Eb);
-    interval_test!(major_third, C, Interval::MajorThird, E);
-    interval_test!(diminished_fourth, C, Interval::DiminishedFourth, E);
-    interval_test!(perfect_fourth, C, Interval::PerfectFourth, F);
-    interval_test!(tritone, C, Interval::Tritone, Gb);
-    interval_test!(diminished_fifth, C, Interval::DiminishedFifth, Gb);
-    interval_test!(augmented_fourth, C, Interval::AugmentedFourth, Gb);
-    interval_test!(perfect_fifth, C, Interval::PerfectFifth, G);
-    interval_test!(diminished_sixth, C, Interval::DiminishedSixth, G);
-    interval_test!(minor_sixth, C, Interval::MinorSixth, Ab);
-    interval_test!(augmented_fifth, C, Interval::AugmentedFifth, Ab);
-    interval_test!(major_sixth, C, Interval::MajorSixth, A);
-    interval_test!(diminished_seventh, C, Interval::DiminishedSeventh, A);
-    interval_test!(minor_seventh, C, Interval::MinorSeventh, Bb);
-    interval_test!(augmented_sixth, C, Interval::AugmentedSixth, Bb);
-    interval_test!(major_seventh, C, Interval::MajorSeventh, B);
-    interval_test!(diminished_octave, C, Interval::DiminishedOctave, B);
 }

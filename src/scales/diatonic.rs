@@ -42,118 +42,21 @@ impl Mode {
 
 #[cfg(test)]
 mod tests {
-    use paste::paste;
+    use rstest::rstest;
 
     use crate::interval::Interval::*;
 
     use super::*;
 
-    macro_rules! mode_interval_test {
-        ($name:ident, $mode:expr, $intervals:expr) => {
-            paste! {
-                #[test]
-                fn [<$name _intervals>]() {
-                    assert_eq!($mode.intervals(), $intervals);
-                }
-            }
-        };
+    #[rstest]
+    #[case(Mode::Lydian,      [PerfectUnison, MajorSecond, MajorThird, AugmentedFourth, PerfectFifth, MajorSixth,  MajorSeventh])]
+    #[case(Mode::Ionian,      [PerfectUnison, MajorSecond, MajorThird, PerfectFourth,   PerfectFifth, MajorSixth,  MajorSeventh])]
+    #[case(Mode::Mixolydian,  [PerfectUnison, MajorSecond, MajorThird, PerfectFourth,   PerfectFifth, MajorSixth,  MinorSeventh])]
+    #[case(Mode::Dorian,      [PerfectUnison, MajorSecond, MinorThird, PerfectFourth,   PerfectFifth, MajorSixth,  MinorSeventh])]
+    #[case(Mode::Aeolian,     [PerfectUnison, MajorSecond, MinorThird, PerfectFourth,   PerfectFifth, MinorSixth,  MinorSeventh])]
+    #[case(Mode::Phrygian,    [PerfectUnison, MinorSecond, MinorThird, PerfectFourth,   PerfectFifth, MinorSixth,  MinorSeventh])]
+    #[case(Mode::Locrian,     [PerfectUnison, MinorSecond, MinorThird, PerfectFourth,   DiminishedFifth, MinorSixth, MinorSeventh])]
+    fn mode_intervals(#[case] mode: Mode, #[case] expected: [Interval; 7]) {
+        assert_eq!(mode.intervals(), expected);
     }
-
-    mode_interval_test!(
-        lydian,
-        Mode::Lydian,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MajorThird,
-            AugmentedFourth,
-            PerfectFifth,
-            MajorSixth,
-            MajorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        ionian,
-        Mode::Ionian,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MajorThird,
-            PerfectFourth,
-            PerfectFifth,
-            MajorSixth,
-            MajorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        mixolydian,
-        Mode::Mixolydian,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MajorThird,
-            PerfectFourth,
-            PerfectFifth,
-            MajorSixth,
-            MinorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        dorian,
-        Mode::Dorian,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MinorThird,
-            PerfectFourth,
-            PerfectFifth,
-            MajorSixth,
-            MinorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        aeolian,
-        Mode::Aeolian,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MinorThird,
-            PerfectFourth,
-            PerfectFifth,
-            MinorSixth,
-            MinorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        phrygian_phrygian,
-        Mode::Phrygian,
-        [
-            PerfectUnison,
-            MinorSecond,
-            MinorThird,
-            PerfectFourth,
-            PerfectFifth,
-            MinorSixth,
-            MinorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        locrian_phrygian,
-        Mode::Locrian,
-        [
-            PerfectUnison,
-            MinorSecond,
-            MinorThird,
-            PerfectFourth,
-            DiminishedFifth,
-            MinorSixth,
-            MinorSeventh,
-        ]
-    );
 }

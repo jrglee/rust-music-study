@@ -4,6 +4,7 @@ use super::degree::interval_for;
 
 const SEMITONES: &'static [usize; 7] = &[2, 1, 2, 2, 1, 3, 1];
 
+#[derive(Debug)]
 pub enum Mode {
     HarmonicMinor,
     LocrianMaj6,
@@ -41,86 +42,19 @@ impl Mode {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
     use super::*;
 
     use crate::interval::Interval::*;
 
-    macro_rules! mode_interval_test {
-        ($name:ident, $mode:expr, $intervals:expr) => {
-            #[test]
-            fn $name() {
-                assert_eq!($mode.intervals(), $intervals)
-            }
-        };
+    #[rstest]
+    #[case(Mode::HarmonicMinor,    [PerfectUnison, MajorSecond, MinorThird,  PerfectFourth,   PerfectFifth,    MinorSixth,  MajorSeventh])]
+    #[case(Mode::IonianAug5,       [PerfectUnison, MajorSecond, MajorThird,  PerfectFourth,   AugmentedFifth,  MajorSixth,  MajorSeventh])]
+    #[case(Mode::DorianLydian,     [PerfectUnison, MajorSecond, MinorThird,  AugmentedFourth, PerfectFifth,    MajorSixth,  MinorSeventh])]
+    #[case(Mode::PhrygianDominant, [PerfectUnison, MinorSecond, MajorThird,  PerfectFourth,   PerfectFifth,    MinorSixth,  MinorSeventh])]
+    #[case(Mode::SuperLocrian,     [PerfectUnison, MinorSecond, MinorThird,  DiminishedFourth, DiminishedFifth, MinorSixth,  DiminishedSeventh])]
+    fn mode_intervals(#[case] mode: Mode, #[case] expected: [Interval; 7]) {
+        assert_eq!(mode.intervals(), expected);
     }
-
-    mode_interval_test!(
-        harmonic_minor_intervals,
-        Mode::HarmonicMinor,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MinorThird,
-            PerfectFourth,
-            PerfectFifth,
-            MinorSixth,
-            MajorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        ionian_aug5_intervals,
-        Mode::IonianAug5,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MajorThird,
-            PerfectFourth,
-            AugmentedFifth,
-            MajorSixth,
-            MajorSeventh
-        ]
-    );
-
-    mode_interval_test!(
-        dorian_lydian_intervals,
-        Mode::DorianLydian,
-        [
-            PerfectUnison,
-            MajorSecond,
-            MinorThird,
-            AugmentedFourth,
-            PerfectFifth,
-            MajorSixth,
-            MinorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        phrygian_dominant_intervals,
-        Mode::PhrygianDominant,
-        [
-            PerfectUnison,
-            MinorSecond,
-            MajorThird,
-            PerfectFourth,
-            PerfectFifth,
-            MinorSixth,
-            MinorSeventh,
-        ]
-    );
-
-    mode_interval_test!(
-        super_locrian_intervals,
-        Mode::SuperLocrian,
-        [
-            PerfectUnison,
-            MinorSecond,
-            MinorThird,
-            DiminishedFourth,
-            DiminishedFifth,
-            MinorSixth,
-            DiminishedSeventh,
-        ]
-    );
 }

@@ -92,7 +92,7 @@ fn semitones_to_c(semitones: usize) -> Note {
 mod tests {
     use crate::note::Note;
     use crate::note::Note::*;
-    use paste::paste;
+    use rstest::rstest;
 
     #[test]
     fn semitones_up() {
@@ -113,34 +113,27 @@ mod tests {
         assert_eq!(C.semitones(12), C);
     }
 
-    macro_rules! parse_note_test {
-        ($name:ident, $call:expr, $expected:expr) => {
-            paste! {
-                #[test]
-                fn [<parse_note_ $name>]() {
-                    assert_eq!(&String::from($call).to_uppercase().parse::<Note>().unwrap(), &$expected);
-                    assert_eq!(&String::from($call).to_lowercase().parse::<Note>().unwrap(), &$expected);
-                }
-            }
-        };
+    #[rstest]
+    #[case("C",  C)]
+    #[case("C#", Db)]
+    #[case("Db", Db)]
+    #[case("D",  D)]
+    #[case("D#", Eb)]
+    #[case("E",  E)]
+    #[case("F",  F)]
+    #[case("F#", Gb)]
+    #[case("Gb", Gb)]
+    #[case("G",  G)]
+    #[case("G#", Ab)]
+    #[case("Ab", Ab)]
+    #[case("A",  A)]
+    #[case("A#", Bb)]
+    #[case("Bb", Bb)]
+    #[case("B",  B)]
+    fn parse_note(#[case] input: &str, #[case] expected: Note) {
+        assert_eq!(String::from(input).to_uppercase().parse::<Note>().unwrap(), expected);
+        assert_eq!(String::from(input).to_lowercase().parse::<Note>().unwrap(), expected);
     }
-
-    parse_note_test!(c, "C", C);
-    parse_note_test!(c_sharp, "C#", Db);
-    parse_note_test!(d_flat, "Db", Db);
-    parse_note_test!(d, "D", D);
-    parse_note_test!(d_sharp, "D#", Eb);
-    parse_note_test!(e, "E", E);
-    parse_note_test!(f, "F", F);
-    parse_note_test!(f_sharp, "F#", Gb);
-    parse_note_test!(g_flat, "Gb", Gb);
-    parse_note_test!(g, "G", G);
-    parse_note_test!(g_sharp, "G#", Ab);
-    parse_note_test!(a_flat, "Ab", Ab);
-    parse_note_test!(a, "A", A);
-    parse_note_test!(a_sharp, "A#", Bb);
-    parse_note_test!(b_flat, "Bb", Bb);
-    parse_note_test!(b, "B", B);
 
     #[test]
     fn parse_error() {

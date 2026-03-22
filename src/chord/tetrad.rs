@@ -1,5 +1,6 @@
 use crate::interval::Interval;
 
+#[derive(Debug)]
 pub enum Tetrad {
     Major7,
     Dominant,
@@ -54,26 +55,24 @@ impl Tetrad {
 
 #[cfg(test)]
 mod tests {
+    use rstest::rstest;
+
+    use crate::note::Note;
     use crate::note::Note::*;
 
     use super::*;
 
-    macro_rules! tetrad_test {
-        ($name:ident, $tetrad:expr, $n1:expr, $n2:expr, $n3:expr, $n4:expr) => {
-            #[test]
-            fn $name() {
-                let ints = $tetrad.intervals();
-                assert_eq!(ints[1].apply_to_note($n1), $n2);
-                assert_eq!(ints[2].apply_to_note($n1), $n3);
-                assert_eq!(ints[3].apply_to_note($n1), $n4);
-            }
-        };
+    #[rstest]
+    #[case(Tetrad::Major7, C, E, G, B)]
+    #[case(Tetrad::Dominant, C, E, G, Bb)]
+    #[case(Tetrad::Minor7, C, Eb, G, Bb)]
+    #[case(Tetrad::MinorMajor7, C, Eb, G, B)]
+    #[case(Tetrad::Minor7Flat5, C, Eb, Gb, Bb)]
+    #[case(Tetrad::Diminished7, C, Eb, Gb, A)]
+    fn tetrad(#[case] t: Tetrad, #[case] root: Note, #[case] third: Note, #[case] fifth: Note, #[case] seventh: Note) {
+        let ints = t.intervals();
+        assert_eq!(ints[1].apply_to_note(root), third);
+        assert_eq!(ints[2].apply_to_note(root), fifth);
+        assert_eq!(ints[3].apply_to_note(root), seventh);
     }
-
-    tetrad_test!(major7, Tetrad::Major7, C, E, G, B);
-    tetrad_test!(dominant, Tetrad::Dominant, C, E, G, Bb);
-    tetrad_test!(minor7, Tetrad::Minor7, C, Eb, G, Bb);
-    tetrad_test!(minor_major7, Tetrad::MinorMajor7, C, Eb, G, B);
-    tetrad_test!(minor7_flat5, Tetrad::Minor7Flat5, C, Eb, Gb, Bb);
-    tetrad_test!(diminished7, Tetrad::Diminished7, C, Eb, Gb, A);
 }
