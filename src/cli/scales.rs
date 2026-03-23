@@ -1,9 +1,9 @@
-use clap::arg;
-use clap::{ArgMatches, Command, ValueEnum};
-use inquire::Select;
 use crate::interval::Interval;
 use crate::note::Note;
 use crate::scales;
+use clap::arg;
+use clap::{ArgMatches, Command, ValueEnum};
+use inquire::Select;
 
 #[derive(Clone, clap::ValueEnum)]
 pub enum ScaleName {
@@ -36,8 +36,7 @@ impl std::str::FromStr for ScaleName {
     type Err = ScaleNameParseError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        <ScaleName as clap::ValueEnum>::from_str(s, true)
-            .map_err(ScaleNameParseError)
+        <ScaleName as clap::ValueEnum>::from_str(s, true).map_err(ScaleNameParseError)
     }
 }
 
@@ -103,8 +102,5 @@ pub fn scale_subcommand() -> Command {
     Command::new("scale")
         .about("Generate a scale")
         .arg(arg!([KEY] "the first note of the scale").value_parser(clap::value_parser!(Note)))
-        .arg(
-            arg!([NAME] "the name of the scale, like major or minor")
-                .value_parser(clap::value_parser!(ScaleName)),
-        )
+        .arg(arg!([NAME] "the name of the scale, like major or minor").value_parser(clap::value_parser!(ScaleName)))
 }

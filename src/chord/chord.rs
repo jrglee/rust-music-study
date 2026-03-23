@@ -41,13 +41,17 @@ mod tests {
     #[case(Interval::MinorThird, Interval::DiminishedFifth, vec![C, Eb, Gb])]
     fn chord_apply_to_c(#[case] third: Interval, #[case] fifth: Interval, #[case] expected: Vec<crate::note::Note>) {
         use crate::interval::Interval as I;
-        let chord = Chord { intervals: vec![I::PerfectUnison, third, fifth] };
+        let chord = Chord {
+            intervals: vec![I::PerfectUnison, third, fifth],
+        };
         assert_eq!(chord.apply_to(C), expected);
     }
 
     #[test]
     fn chord_add_interval_extends() {
-        let triad = Chord { intervals: vec![Interval::PerfectUnison, Interval::MajorThird, Interval::PerfectFifth] };
+        let triad = Chord {
+            intervals: vec![Interval::PerfectUnison, Interval::MajorThird, Interval::PerfectFifth],
+        };
         let maj7 = triad + Interval::MajorSeventh;
         assert_eq!(maj7.apply_to(C), vec![C, E, G, B]);
     }

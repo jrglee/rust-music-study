@@ -101,8 +101,8 @@ fn semitones_to_c_isize(semitones: isize) -> Note {
 
 #[cfg(test)]
 mod tests {
-    use crate::note::{Note, NoteParseError};
     use crate::note::Note::*;
+    use crate::note::{Note, NoteParseError};
     use rstest::rstest;
 
     #[test]
@@ -126,22 +126,22 @@ mod tests {
     }
 
     #[rstest]
-    #[case("C",  C)]
+    #[case("C", C)]
     #[case("C#", Db)]
     #[case("Db", Db)]
-    #[case("D",  D)]
+    #[case("D", D)]
     #[case("D#", Eb)]
-    #[case("E",  E)]
-    #[case("F",  F)]
+    #[case("E", E)]
+    #[case("F", F)]
     #[case("F#", Gb)]
     #[case("Gb", Gb)]
-    #[case("G",  G)]
+    #[case("G", G)]
     #[case("G#", Ab)]
     #[case("Ab", Ab)]
-    #[case("A",  A)]
+    #[case("A", A)]
     #[case("A#", Bb)]
     #[case("Bb", Bb)]
-    #[case("B",  B)]
+    #[case("B", B)]
     fn parse_note(#[case] input: &str, #[case] expected: Note) -> Result<(), NoteParseError> {
         assert_eq!(String::from(input).to_uppercase().parse::<Note>()?, expected);
         assert_eq!(String::from(input).to_lowercase().parse::<Note>()?, expected);
@@ -151,10 +151,7 @@ mod tests {
 
     #[test]
     fn parse_error() {
-        assert_eq!(
-            "h".parse::<Note>().unwrap_err().to_string(),
-            "Invalid note H"
-        )
+        assert_eq!("h".parse::<Note>().unwrap_err().to_string(), "Invalid note H")
     }
 
     #[test]

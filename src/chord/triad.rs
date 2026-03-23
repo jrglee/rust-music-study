@@ -41,12 +41,12 @@ mod tests {
     use super::*;
 
     #[rstest]
-    #[case(Triad::Major,     C, E,  G)]
-    #[case(Triad::Minor,     C, Eb, G)]
-    #[case(Triad::Augmented, C, E,  Ab)]
+    #[case(Triad::Major, C, E, G)]
+    #[case(Triad::Minor, C, Eb, G)]
+    #[case(Triad::Augmented, C, E, Ab)]
     #[case(Triad::Diminished, C, Eb, Gb)]
-    #[case(Triad::Sus2,      C, D,  G)]
-    #[case(Triad::Sus4,      C, F,  G)]
+    #[case(Triad::Sus2, C, D, G)]
+    #[case(Triad::Sus4, C, F, G)]
     fn triad_intervals(#[case] chord: Triad, #[case] root: Note, #[case] third: Note, #[case] fifth: Note) {
         let ints = chord.intervals();
         assert_eq!(ints[1].apply_to_note(root), third);

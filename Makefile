@@ -1,6 +1,9 @@
 .DEFAULT_GOAL := prepush
 
-prepush: build test
+prepush: format test build
+
+format:
+	cargo fmt
 
 build:
 	cargo build

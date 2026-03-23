@@ -35,19 +35,19 @@ pub enum Interval {
 
 pub(crate) fn canonical_interval(semitones: usize) -> Interval {
     match semitones % 12 {
-        0  => Interval::PerfectUnison,
-        1  => Interval::MinorSecond,
-        2  => Interval::MajorSecond,
-        3  => Interval::MinorThird,
-        4  => Interval::MajorThird,
-        5  => Interval::PerfectFourth,
-        6  => Interval::Tritone,
-        7  => Interval::PerfectFifth,
-        8  => Interval::MinorSixth,
-        9  => Interval::MajorSixth,
+        0 => Interval::PerfectUnison,
+        1 => Interval::MinorSecond,
+        2 => Interval::MajorSecond,
+        3 => Interval::MinorThird,
+        4 => Interval::MajorThird,
+        5 => Interval::PerfectFourth,
+        6 => Interval::Tritone,
+        7 => Interval::PerfectFifth,
+        8 => Interval::MinorSixth,
+        9 => Interval::MajorSixth,
         10 => Interval::MinorSeventh,
         11 => Interval::MajorSeventh,
-        _  => unreachable!(),
+        _ => unreachable!(),
     }
 }
 
@@ -120,50 +120,50 @@ mod tests {
     use super::*;
 
     #[rstest]
-    #[case(Interval::PerfectUnison,   C)]
-    #[case(Interval::PerfectOctave,   C)]
+    #[case(Interval::PerfectUnison, C)]
+    #[case(Interval::PerfectOctave, C)]
     #[case(Interval::DiminishedSecond, C)]
     #[case(Interval::AugmentedSeventh, C)]
-    #[case(Interval::MinorSecond,     Db)]
+    #[case(Interval::MinorSecond, Db)]
     #[case(Interval::AugmentedUnison, Db)]
-    #[case(Interval::MajorSecond,     D)]
+    #[case(Interval::MajorSecond, D)]
     #[case(Interval::DiminishedThird, D)]
-    #[case(Interval::MinorThird,      Eb)]
+    #[case(Interval::MinorThird, Eb)]
     #[case(Interval::AugmentedSecond, Eb)]
-    #[case(Interval::MajorThird,      E)]
+    #[case(Interval::MajorThird, E)]
     #[case(Interval::DiminishedFourth, E)]
-    #[case(Interval::PerfectFourth,   F)]
-    #[case(Interval::Tritone,         Gb)]
+    #[case(Interval::PerfectFourth, F)]
+    #[case(Interval::Tritone, Gb)]
     #[case(Interval::DiminishedFifth, Gb)]
     #[case(Interval::AugmentedFourth, Gb)]
-    #[case(Interval::PerfectFifth,    G)]
+    #[case(Interval::PerfectFifth, G)]
     #[case(Interval::DiminishedSixth, G)]
-    #[case(Interval::MinorSixth,      Ab)]
-    #[case(Interval::AugmentedFifth,  Ab)]
-    #[case(Interval::MajorSixth,      A)]
+    #[case(Interval::MinorSixth, Ab)]
+    #[case(Interval::AugmentedFifth, Ab)]
+    #[case(Interval::MajorSixth, A)]
     #[case(Interval::DiminishedSeventh, A)]
-    #[case(Interval::MinorSeventh,    Bb)]
-    #[case(Interval::AugmentedSixth,  Bb)]
-    #[case(Interval::MajorSeventh,    B)]
+    #[case(Interval::MinorSeventh, Bb)]
+    #[case(Interval::AugmentedSixth, Bb)]
+    #[case(Interval::MajorSeventh, B)]
     #[case(Interval::DiminishedOctave, B)]
     fn interval_from_c(#[case] interv: Interval, #[case] expected: Note) {
         assert_eq!(interv.apply_to_note(C), expected);
     }
 
     #[rstest]
-    #[case(C, Interval::MajorThird,   E)]
+    #[case(C, Interval::MajorThird, E)]
     #[case(C, Interval::PerfectFifth, G)]
-    #[case(G, Interval::MajorThird,   B)]
-    #[case(B, Interval::MinorSecond,  C)]
+    #[case(G, Interval::MajorThird, B)]
+    #[case(B, Interval::MinorSecond, C)]
     #[case(C, Interval::PerfectUnison, C)]
     fn note_shl_interval(#[case] note: Note, #[case] interval: Interval, #[case] expected: Note) {
         assert_eq!(note << interval, expected);
     }
 
     #[rstest]
-    #[case(E, Interval::MajorThird,   C)]
+    #[case(E, Interval::MajorThird, C)]
     #[case(G, Interval::PerfectFifth, C)]
-    #[case(C, Interval::MinorSecond,  B)]
+    #[case(C, Interval::MinorSecond, B)]
     #[case(C, Interval::PerfectUnison, C)]
     #[case(Bb, Interval::MinorSeventh, C)]
     fn note_shr_interval(#[case] note: Note, #[case] interval: Interval, #[case] expected: Note) {

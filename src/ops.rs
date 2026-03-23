@@ -6,7 +6,9 @@ use crate::interval::Interval;
 impl Add for Interval {
     type Output = Chord;
     fn add(self, rhs: Interval) -> Chord {
-        Chord { intervals: vec![Interval::PerfectUnison, self, rhs] }
+        Chord {
+            intervals: vec![Interval::PerfectUnison, self, rhs],
+        }
     }
 }
 
