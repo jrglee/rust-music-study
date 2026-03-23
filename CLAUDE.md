@@ -16,7 +16,7 @@ This is a personal project used to learn Rust and explore music theory. It is no
 
 ## Process
 
-- Every change must be fully planned before execution. Use plan mode to think through the complete approach first — this minimizes half-executed changes that are hard to debug. Verify by running `cargo build` and `cargo test` after implementation.
+- Every change must be fully planned before execution. Use plan mode to think through the complete approach first — this minimizes half-executed changes that are hard to debug. Verify by running `make` after implementation.
 - For exploratory work or tasks with multiple viable approaches, use a git worktree and spawn subagents to try different approaches. Worktree exploration produces proposals only — nothing is merged back automatically, and it is valid to throw away the results entirely.
 
 ## Code review

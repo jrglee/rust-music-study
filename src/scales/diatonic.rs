@@ -2,7 +2,7 @@ use super::degree::interval_for;
 use crate::interval::Interval;
 use crate::scales::Degree;
 
-const SEMITONES: &'static [usize; 7] = &[2, 2, 1, 2, 2, 2, 1];
+const SEMITONES: &[usize; 7] = &[2, 2, 1, 2, 2, 2, 1];
 
 #[derive(Debug)]
 pub enum Mode {

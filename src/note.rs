@@ -36,8 +36,7 @@ impl Note {
     }
 
     pub fn transpose(&self, semitones: isize) -> Note {
-        let corrected: isize = (12 + (semitones % 12)) % 12;
-        semitones_to_c_isize(self.semitones_from_c() as isize + corrected)
+        semitones_to_c_isize(self.semitones_from_c() as isize + semitones.rem_euclid(12))
     }
 }
 

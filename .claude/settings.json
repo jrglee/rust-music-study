@@ -5,6 +5,7 @@
       "mcp__cachebro__read_file",
       "Bash(rustc --version)",
       "Bash(cargo:*)",
+      "Bash(make:*)",
       "WebFetch(domain:crates.io)",
       "Bash(rustup show:*)",
       "Bash(rustup component:*)",

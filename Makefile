@@ -1,9 +1,12 @@
 .DEFAULT_GOAL := prepush
 
-prepush: format test build
+prepush: format lint test build
 
 format:
 	cargo fmt
+
+lint:
+	cargo clippy -- -D warnings
 
 build:
 	cargo build
