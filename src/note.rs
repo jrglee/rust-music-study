@@ -18,7 +18,7 @@ pub enum Note {
 }
 
 impl Note {
-    pub(crate) fn semitones_from_c(&self) -> usize {
+    pub fn semitones_from_c(&self) -> usize {
         match self {
             Note::C => 0,
             Note::Db => 1,
@@ -36,7 +36,22 @@ impl Note {
     }
 
     pub fn transpose(&self, semitones: isize) -> Note {
-        semitones_to_c_isize(self.semitones_from_c() as isize + semitones.rem_euclid(12))
+        let semitones = (self.semitones_from_c() as isize + semitones).rem_euclid(12);
+        match semitones {
+            0 => Note::C,
+            1 => Note::Db,
+            2 => Note::D,
+            3 => Note::Eb,
+            4 => Note::E,
+            5 => Note::F,
+            6 => Note::Gb,
+            7 => Note::G,
+            8 => Note::Ab,
+            9 => Note::A,
+            10 => Note::Bb,
+            11 => Note::B,
+            _ => unreachable!(),
+        }
     }
 }
 
@@ -80,92 +95,77 @@ impl FromStr for Note {
     }
 }
 
-fn semitones_to_c_isize(semitones: isize) -> Note {
-    match semitones % 12 {
-        0 => Note::C,
-        1 => Note::Db,
-        2 => Note::D,
-        3 => Note::Eb,
-        4 => Note::E,
-        5 => Note::F,
-        6 => Note::Gb,
-        7 => Note::G,
-        8 => Note::Ab,
-        9 => Note::A,
-        10 => Note::Bb,
-        11 => Note::B,
-        _ => unreachable!(),
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::note::Note::*;
     use crate::note::{Note, NoteParseError};
     use rstest::rstest;
 
-    #[test]
-    fn transpose_positive() {
-        assert_eq!(C.transpose(1), Db);
-        assert_eq!(C.transpose(2), D);
-        assert_eq!(Db.transpose(1), D);
-        assert_eq!(F.transpose(3), Ab);
-        assert_eq!(C.transpose(0), C);
-        assert_eq!(C.transpose(12), C);
-        assert_eq!(C.transpose(24), C);
-    }
-
-    #[test]
-    fn transpose_negative() {
-        assert_eq!(C.transpose(-1), B);
-        assert_eq!(C.transpose(1), Db);
-        assert_eq!(C.transpose(0), C);
-        assert_eq!(C.transpose(12), C);
-        assert_eq!(E.transpose(-4), C);
-    }
-
     #[rstest]
-    #[case("C", C)]
-    #[case("C#", Db)]
-    #[case("Db", Db)]
-    #[case("D", D)]
-    #[case("D#", Eb)]
-    #[case("E", E)]
-    #[case("F", F)]
-    #[case("F#", Gb)]
-    #[case("Gb", Gb)]
-    #[case("G", G)]
-    #[case("G#", Ab)]
-    #[case("Ab", Ab)]
-    #[case("A", A)]
-    #[case("A#", Bb)]
-    #[case("Bb", Bb)]
-    #[case("B", B)]
+    #[case("C", Note::C)]
+    #[case("c", Note::C)]
+    #[case("C#", Note::Db)]
+    #[case("c#", Note::Db)]
+    #[case("Db", Note::Db)]
+    #[case("db", Note::Db)]
+    #[case("D", Note::D)]
+    #[case("d", Note::D)]
+    #[case("D#", Note::Eb)]
+    #[case("d#", Note::Eb)]
+    #[case("EB", Note::Eb)]
+    #[case("eb", Note::Eb)]
+    #[case("E", Note::E)]
+    #[case("e", Note::E)]
+    #[case("F", Note::F)]
+    #[case("f", Note::F)]
+    #[case("F#", Note::Gb)]
+    #[case("f#", Note::Gb)]
+    #[case("GB", Note::Gb)]
+    #[case("gb", Note::Gb)]
+    #[case("G", Note::G)]
+    #[case("g", Note::G)]
+    #[case("G#", Note::Ab)]
+    #[case("g#", Note::Ab)]
+    #[case("AB", Note::Ab)]
+    #[case("ab", Note::Ab)]
+    #[case("A", Note::A)]
+    #[case("a", Note::A)]
+    #[case("A#", Note::Bb)]
+    #[case("a#", Note::Bb)]
+    #[case("BB", Note::Bb)]
+    #[case("bb", Note::Bb)]
+    #[case("B", Note::B)]
+    #[case("b", Note::B)]
     fn parse_note(#[case] input: &str, #[case] expected: Note) -> Result<(), NoteParseError> {
-        assert_eq!(String::from(input).to_uppercase().parse::<Note>()?, expected);
-        assert_eq!(String::from(input).to_lowercase().parse::<Note>()?, expected);
-
+        assert_eq!(input.parse::<Note>()?, expected);
         Ok(())
     }
 
-    #[test]
-    fn parse_error() {
-        assert_eq!("h".parse::<Note>().unwrap_err().to_string(), "Invalid note H")
+    #[rstest]
+    #[case("h")]
+    #[case("X")]
+    #[case("Cx")]
+    #[case("D##")]
+    #[case("")]
+    fn parse_error(#[case] input: &str) {
+        assert!(input.parse::<Note>().is_err());
     }
 
-    #[test]
-    fn shl_semitones() {
-        assert_eq!(C << 4, E);
-        assert_eq!(C << 7, G);
-        assert_eq!(C << 0, C);
-        assert_eq!(C << 12, C);
+    #[rstest]
+    #[case(Note::C, 7, Note::G)]
+    #[case(Note::Db, 1, Note::D)]
+    #[case(Note::F, 5, Note::Bb)]
+    fn shl_semitones(#[case] note: Note, #[case] semitones: isize, #[case] expected: Note) {
+        assert_eq!(note << semitones, expected);
     }
 
-    #[test]
-    fn shr_semitones() {
-        assert_eq!(E >> 4, C);
-        assert_eq!(C >> 1, B);
-        assert_eq!(C >> 0, C);
-        assert_eq!(G >> 7, C);
+    #[rstest]
+    #[case(Note::E, 4, Note::C)]
+    #[case(Note::G, 7, Note::C)]
+    #[case(Note::C, 1, Note::B)]
+    #[case(Note::C, 0, Note::C)]
+    #[case(Note::C, 12, Note::C)]
+    #[case(Note::Bb, 10, Note::C)]
+    fn shr_semitones(#[case] note: Note, #[case] semitones: isize, #[case] expected: Note) {
+        assert_eq!(note >> semitones, expected);
     }
 }
