@@ -13,7 +13,7 @@ pub struct Chord {
 impl Chord {
     /// Apply this chord to a root note, returning the notes of the chord.
     pub fn apply_to(&self, root: Note) -> Vec<Note> {
-        self.intervals.iter().map(|i| root + *i).collect()
+        self.intervals.iter().map(|i| root << *i).collect()
     }
 }
 

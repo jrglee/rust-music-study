@@ -1,7 +1,5 @@
-use std::ops::{Add, Sub};
+use std::ops::{Shl, Shr};
 use std::str::FromStr;
-
-use crate::interval::{canonical_interval, Interval};
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Note {
@@ -37,28 +35,23 @@ impl Note {
         }
     }
 
-    pub fn semitones_up(&self, semitones: usize) -> Note {
-        semitones_to_c(self.semitones_from_c() + semitones)
-    }
-
-    pub fn semitones(&self, semitones: isize) -> Note {
-        let corrected: usize = (12 + (semitones % 12)) as usize;
-        self.semitones_up(corrected)
+    pub fn transpose(&self, semitones: isize) -> Note {
+        let corrected: isize = (12 + (semitones % 12)) % 12;
+        semitones_to_c_isize(self.semitones_from_c() as isize + corrected)
     }
 }
 
-impl Add<Interval> for Note {
+impl Shl<isize> for Note {
     type Output = Note;
-    fn add(self, rhs: Interval) -> Note {
-        rhs.apply_to_note(self)
+    fn shl(self, rhs: isize) -> Note {
+        self.transpose(rhs)
     }
 }
 
-impl Sub for Note {
-    type Output = Interval;
-    fn sub(self, rhs: Note) -> Interval {
-        let distance = (self.semitones_from_c() + 12 - rhs.semitones_from_c()) % 12;
-        canonical_interval(distance)
+impl Shr<isize> for Note {
+    type Output = Note;
+    fn shr(self, rhs: isize) -> Note {
+        self.transpose(-rhs)
     }
 }
 
@@ -88,7 +81,7 @@ impl FromStr for Note {
     }
 }
 
-fn semitones_to_c(semitones: usize) -> Note {
+fn semitones_to_c_isize(semitones: isize) -> Note {
     match semitones % 12 {
         0 => Note::C,
         1 => Note::Db,
@@ -108,28 +101,28 @@ fn semitones_to_c(semitones: usize) -> Note {
 
 #[cfg(test)]
 mod tests {
-    use crate::interval::Interval;
     use crate::note::{Note, NoteParseError};
     use crate::note::Note::*;
     use rstest::rstest;
 
     #[test]
-    fn semitones_up() {
-        assert_eq!(C.semitones_up(1), Db);
-        assert_eq!(C.semitones_up(2), D);
-        assert_eq!(Db.semitones_up(1), D);
-        assert_eq!(F.semitones_up(3), Ab);
-        assert_eq!(C.semitones_up(0), C);
-        assert_eq!(C.semitones_up(12), C);
-        assert_eq!(C.semitones_up(24), C);
+    fn transpose_positive() {
+        assert_eq!(C.transpose(1), Db);
+        assert_eq!(C.transpose(2), D);
+        assert_eq!(Db.transpose(1), D);
+        assert_eq!(F.transpose(3), Ab);
+        assert_eq!(C.transpose(0), C);
+        assert_eq!(C.transpose(12), C);
+        assert_eq!(C.transpose(24), C);
     }
 
     #[test]
-    fn semitones() {
-        assert_eq!(C.semitones(-1), B);
-        assert_eq!(C.semitones(1), Db);
-        assert_eq!(C.semitones(0), C);
-        assert_eq!(C.semitones(12), C);
+    fn transpose_negative() {
+        assert_eq!(C.transpose(-1), B);
+        assert_eq!(C.transpose(1), Db);
+        assert_eq!(C.transpose(0), C);
+        assert_eq!(C.transpose(12), C);
+        assert_eq!(E.transpose(-4), C);
     }
 
     #[rstest]
@@ -164,23 +157,19 @@ mod tests {
         )
     }
 
-    #[rstest]
-    #[case(C, Interval::MajorThird,   E)]
-    #[case(C, Interval::PerfectFifth, G)]
-    #[case(G, Interval::MajorThird,   B)]
-    #[case(B, Interval::MinorSecond,  C)]
-    #[case(C, Interval::PerfectUnison, C)]
-    fn note_add_interval(#[case] note: Note, #[case] interval: Interval, #[case] expected: Note) {
-        assert_eq!(note + interval, expected);
+    #[test]
+    fn shl_semitones() {
+        assert_eq!(C << 4, E);
+        assert_eq!(C << 7, G);
+        assert_eq!(C << 0, C);
+        assert_eq!(C << 12, C);
     }
 
-    #[rstest]
-    #[case(E, C, Interval::MajorThird)]
-    #[case(G, C, Interval::PerfectFifth)]
-    #[case(C, B, Interval::MinorSecond)]
-    #[case(C, C, Interval::PerfectUnison)]
-    #[case(Bb, C, Interval::MinorSeventh)]
-    fn note_sub_note(#[case] high: Note, #[case] low: Note, #[case] expected: Interval) {
-        assert_eq!(high - low, expected);
+    #[test]
+    fn shr_semitones() {
+        assert_eq!(E >> 4, C);
+        assert_eq!(C >> 1, B);
+        assert_eq!(C >> 0, C);
+        assert_eq!(G >> 7, C);
     }
 }

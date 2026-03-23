@@ -1,3 +1,5 @@
+use std::ops::{Shl, Shr, Sub};
+
 use crate::note::Note;
 
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq)]
@@ -83,7 +85,29 @@ impl Interval {
     }
 
     pub fn apply_to_note(&self, note: Note) -> Note {
-        note.semitones_up(self.semitones())
+        note.transpose(self.semitones() as isize)
+    }
+}
+
+impl Shl<Interval> for Note {
+    type Output = Note;
+    fn shl(self, rhs: Interval) -> Note {
+        self.transpose(rhs.semitones() as isize)
+    }
+}
+
+impl Shr<Interval> for Note {
+    type Output = Note;
+    fn shr(self, rhs: Interval) -> Note {
+        self.transpose(-(rhs.semitones() as isize))
+    }
+}
+
+impl Sub for Note {
+    type Output = Interval;
+    fn sub(self, rhs: Note) -> Interval {
+        let distance = (self.semitones_from_c() + 12 - rhs.semitones_from_c()) % 12;
+        canonical_interval(distance)
     }
 }
 
@@ -123,6 +147,36 @@ mod tests {
     #[case(Interval::MajorSeventh,    B)]
     #[case(Interval::DiminishedOctave, B)]
     fn interval_from_c(#[case] interv: Interval, #[case] expected: Note) {
-        assert_eq!(C.semitones_up(interv.semitones()), expected);
+        assert_eq!(interv.apply_to_note(C), expected);
+    }
+
+    #[rstest]
+    #[case(C, Interval::MajorThird,   E)]
+    #[case(C, Interval::PerfectFifth, G)]
+    #[case(G, Interval::MajorThird,   B)]
+    #[case(B, Interval::MinorSecond,  C)]
+    #[case(C, Interval::PerfectUnison, C)]
+    fn note_shl_interval(#[case] note: Note, #[case] interval: Interval, #[case] expected: Note) {
+        assert_eq!(note << interval, expected);
+    }
+
+    #[rstest]
+    #[case(E, Interval::MajorThird,   C)]
+    #[case(G, Interval::PerfectFifth, C)]
+    #[case(C, Interval::MinorSecond,  B)]
+    #[case(C, Interval::PerfectUnison, C)]
+    #[case(Bb, Interval::MinorSeventh, C)]
+    fn note_shr_interval(#[case] note: Note, #[case] interval: Interval, #[case] expected: Note) {
+        assert_eq!(note >> interval, expected);
+    }
+
+    #[rstest]
+    #[case(E, C, Interval::MajorThird)]
+    #[case(G, C, Interval::PerfectFifth)]
+    #[case(C, B, Interval::MinorSecond)]
+    #[case(C, C, Interval::PerfectUnison)]
+    #[case(Bb, C, Interval::MinorSeventh)]
+    fn note_sub_note(#[case] high: Note, #[case] low: Note, #[case] expected: Interval) {
+        assert_eq!(high - low, expected);
     }
 }
